@@ -1,0 +1,63 @@
+{
+  "result": [
+    {
+      "title": "Dashboard",
+      "permission": "DASHBOARD",
+      "disabled": true,
+      "children": null
+    },
+    {
+      "title": "嵌套路由",
+      "permission": "NESTEDROUTES",
+      "disabled": false,
+      "children": [
+        {
+          "title": "路由-1",
+          "permission": "NESTEDROUTES-1",
+          "disabled": false,
+          "children": [
+            {
+              "title": "路由-1-1",
+              "permission": "NESTEDROUTES-1-1",
+              "disabled": false,
+              "children": null
+            },
+            {
+              "title": "路由-1-2",
+              "permission": "NESTEDROUTES-1-2",
+              "disabled": false,
+              "children": [
+                {
+                  "title": "路由-1-2-1",
+                  "permission": "NESTEDROUTES-1-2-1",
+                  "disabled": false,
+                  "children": null
+                },
+                {
+                  "title": "路由-1-2-2",
+                  "permission": "NESTEDROUTES-1-2-2",
+                  "disabled": false,
+                  "children": null
+                },
+                {
+                  "title": "路由-1-2-3",
+                  "permission": "NESTEDROUTES-1-2-3",
+                  "disabled": false,
+                  "children": null
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "路由-2",
+          "permission": "NESTEDROUTES-2",
+          "disabled": false,
+          "children": null
+        }
+      ]
+    }
+  ],
+  "status": 0,
+  "msg": "xxxxx"
+}
