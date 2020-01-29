@@ -4,7 +4,7 @@
     <el-container id='app-right-aside' :class="[$store.state.isFixedSystemHeader ? 'fixed-header' : 'release-header']">
       <MyHeader class='app-header' />
       <my-tab v-if='$store.state.isShowSystemTabView' />
-      <div id='app-content'>
+      <div id='app-content' :class="{ 'is-show-tabs': $store.state.isShowSystemTabView }">
         <MyContent />
       </div>
     </el-container>
@@ -61,8 +61,12 @@ export default {
       display: block;
       min-height: 100%;
       #app-content {
+        height: calc(100% - 50px);
         padding: 20px;
         box-sizing: border-box;
+        &.is-show-tabs {
+          height: calc(100% - 50px - 32px);
+        }
       }
     }
   }

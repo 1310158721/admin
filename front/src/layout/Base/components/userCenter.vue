@@ -66,7 +66,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['RESETMENULIST', 'SETLAYOUTCONFIGDRAWER']),
+    ...mapMutations(['SETMENULIST', 'SETLAYOUTCONFIGDRAWER']),
     handleCommand (command) {
       this.dropdownEnum.filter(i => i.command === command)[0].cb();
     },
@@ -87,7 +87,7 @@ export default {
       }).then(() => {
         Cookie.remove('token');
         Cookie.remove('cacheRoutes');
-        this.RESETMENULIST(null);
+        this.SETMENULIST(null);
         this.$router.push({ path: '/Login', replace: true });
       }).catch(() => {});
     }

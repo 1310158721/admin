@@ -1,7 +1,6 @@
 <template>
-  <div class="personal-page-wrapper" v-loading="isLoading">
+  <div class="permission-add-page-wrapper">
     <el-form
-      v-if="userInfos"
       :model="userInfos"
       :rules="rules"
       ref="form"
@@ -11,39 +10,30 @@
     >
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-form-item size="small" label="账号：" prop='account'>
+          <el-form-item size="small" label="账号：" prop="account">
             <el-input size="small" v-model="userInfos.account" />
           </el-form-item>
-          <el-form-item size="small" label="密码：" prop='password'>
+          <el-form-item size="small" label="密码：" prop="password">
             <el-input size="small" v-model="userInfos.password" />
           </el-form-item>
-          <el-form-item size="small" label="名称：" prop='name'>
+          <el-form-item size="small" label="名称：" prop="name">
             <el-input size="small" v-model="userInfos.name" />
           </el-form-item>
-          <el-form-item size="small" label="号码：" prop='mobile'>
+          <el-form-item size="small" label="号码：" prop="mobile">
             <el-input size="small" maxlength='11' v-model="userInfos.mobile" />
           </el-form-item>
-          <el-form-item size="small" label="创建时间：">
-            <el-input size="small" disabled v-model="userInfos.createdTime" />
-          </el-form-item>
-          <el-form-item size="small" label="头像：" prop='avatar'>
-            <div
-              class="avatar-wrapper"
-            >
-              <UploadFiles
-                action="/api/upload"
-                :data="{
-                  directory: 'avatar'
-                }"
-                :defaultPics="defaultPics"
-                @removeCallBack="removeCallBack"
-                @successCallback="successCallback"
-              />
-            </div>
+          <el-form-item size="small" label="头像：" prop="avatar">
+            <UploadFiles
+              action="/api/upload"
+              :data="{
+                directory: 'avatar'
+              }"
+              @removeCallBack="removeCallBack"
+              @successCallback="successCallback"
+            />
           </el-form-item>
           <el-form-item size="small" label="级别：">
             <el-select
-              :disabled="userInfos.role === 'SUPERADMIN'"
               v-model="userInfos.role"
               placeholder="请选择"
             >
@@ -69,7 +59,6 @@
         <el-col :span="12">
           <el-form-item size="small" label="权限菜单：">
             <el-tree
-              disable
               v-if="menuList"
               :data="menuList"
               show-checkbox
@@ -88,8 +77,8 @@
         <el-button
           type="primary"
           size="small"
-          @click.native="$throttleHandleSave('form')"
-          >保 存</el-button
+          @click.native="$throttleHandleAdd('form')"
+          >添加</el-button
         >
       </div>
     </el-form>
@@ -97,17 +86,31 @@
 </template>
 
 <script>
-import { $formDate, $throttle } from '@/assets/js/utils';
+import { $throttle } from '@/assets/js/utils';
 import { roleEnum } from '@/assets/js/enum';
 import { RegExp } from '@/assets/js/constant';
-import { mapMutations } from 'vuex';
 export default {
-  name: 'Personal',
+  name: 'PermissionAddPage',
   components: {},
   props: {},
   data () {
     return {
-      userInfos: null,
+      menuList: null,
+      hasPermission: ['DASHBOARD'],
+      defaultProps: {
+        children: 'children',
+        label: 'title'
+      },
+      userInfos: {
+        account: '',
+        password: '',
+        name: '',
+        mobile: '',
+        role: 'COMMON',
+        avatar: '',
+        desc: '',
+        permission: ''
+      },
       rules: {
         account: [
           { required: true, message: '请输入用户账号' },
@@ -135,39 +138,27 @@ export default {
         desc: [
           { required: true, message: '请输入用户相关的描述' }
         ]
-      },
-      isLoading: false,
-      menuList: null,
-      hasPermission: null,
-      defaultProps: {
-        children: 'children',
-        label: 'title'
-      },
-      defaultPics: null
+      }
     };
   },
   computed: {
     roleEnum () {
-      if (this.userInfos.role === 'SUPERADMIN') {
+      if (this.$store.state.userInfo.role === 'SUPERADMIN') {
         return roleEnum;
       } else {
         return roleEnum.filter(i => i.value !== 'SUPERADMIN');
       }
     },
-    $throttleHandleSave () {
-      return $throttle((ref) => this.handleSave(ref), 2000);
+    $throttleHandleAdd () {
+      return $throttle(ref => this.handleAdd(ref), 2000);
     }
   },
   methods: {
-    ...mapMutations(['SETMENULIST']),
-    async getUserInfo () {
-      return await this.$axios.get('/getUserInfos');
-    },
     async getAllPermissionMenu () {
       return await this.$axios.get('/getAllPermissionMenu');
     },
-    async updateUserPersonalInfos (data) {
-      return await this.$axios.post('/updateUserPersonalInfos', data);
+    async registerUser (data) {
+      return await this.$axios.post('/registerUser', data);
     },
     checkChange (data, options) {
       const currentClickKey = data.permission;
@@ -209,13 +200,23 @@ export default {
         this.getAllParentKeys(parent.parent, parentKeysArray);
       }
     },
-    disabledMenuList (list) {
-      for (let i = 0, len = list.length; i < len; i++) {
-        list[i].disabled = true;
-        if (list[i].children && list[i].children.length) {
-          this.disabledMenuList(list[i].children);
+    handleAdd (ref) {
+      this.$refs[ref].validate(valid => {
+        if (valid) {
+          this.userInfos.permission = this.$refs.tree.getCheckedKeys().join(',');
+          this.registerUser(this.userInfos)
+            .then((res) => {
+              const { status, msg } = res.data;
+              if (status === 0) {
+                this.$message.success(msg);
+                this.$router.back();
+              }
+            });
+        } else {
+          console.log('error submit!!');
+          return false;
         }
-      }
+      });
     },
     removeCallBack () {
       this.userInfos.avatar = '';
@@ -224,63 +225,18 @@ export default {
       const { result } = response;
       const { url } = result;
       this.userInfos.avatar = url;
-    },
-    handleSave (ref) {
-      this.$refs[ref].validate((valid) => {
-          if (valid) {
-            const { account, password, name, mobile, avatar, desc } = this.userInfos;
-            const postData = {
-              account, password, name, mobile, avatar, desc
-            };
-            this.updateUserPersonalInfos(postData)
-              .then((res) => {
-                const { status, msg } = res.data;
-                if (status === 0) {
-                  this.$message.success(msg);
-                  this.SETMENULIST(null);
-                  this.$router.back();
-                }
-              });
-          } else {
-            console.log('error submit!!');
-            return false;
-          }
-        });
     }
   },
   created () {
-    this.isLoading = true;
-    this.$axios.all([this.getUserInfo(), this.getAllPermissionMenu()]).then(
-      this.$axios.spread((user, menu) => {
-        const menuStatus = menu.data.status;
-        if (menuStatus === 0) {
-          this.disabledMenuList(menu.data.result);
-          this.menuList = menu.data.result;
-        }
-
-        const userStatus = user.data.status;
-        if (userStatus === 0) {
-          this.userInfos = user.data.result;
-          this.defaultPics = [
-            {
-              name: 'avatar',
-              url: user.data.result.avatar
-            }
-          ];
-          this.userInfos.createdTime = $formDate(
-            new Date(this.userInfos.createdTime),
-            'yyyy-MM-dd hh:mm:ss'
-          );
-          const { permission = '' } = this.userInfos;
-          this.hasPermission = permission.split(',');
-          this.$nextTick(() => {
-            this.$refs.tree.setCheckedKeys(permission.split(','));
-          });
-        }
-
-        this.isLoading = false;
-      })
-    );
+    this.getAllPermissionMenu().then(res => {
+      const { status, result } = res.data;
+      if (status === 0) {
+        this.menuList = result;
+        this.$nextTick(() => {
+          this.$refs.tree.setCheckedKeys(this.hasPermission);
+        });
+      }
+    });
   },
   mounted () {},
   watch: {}
@@ -288,17 +244,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.personal-page-wrapper {
+.permission-add-page-wrapper {
   min-height: 100%;
   width: 100%;
   padding: 20px;
   box-sizing: border-box;
   .permission-form {
-    .avatar-wrapper {
-      height: 144px;
-      width: 144px;
-      overflow: hidden;
-    }
+    // width: 500px;
     .button-wrapper {
       text-align: center;
       .el-button {

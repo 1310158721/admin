@@ -1,5 +1,9 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const MYOSS = require('../../oss/oss');
+const myOss = new MYOSS();
+
+const roleEnum = require('../../utils/enum').GetRoleEnum();
 
 class USERINFOS {
   constructor() {
@@ -88,8 +92,10 @@ class USERINFOS {
    */
   GetUserInfos() {
     this.app.get('/api/getUserInfos', (req, res, next) => {
+      const { _id } = req.query;
       const { token } = req.signedCookies;
-      this.UserModel.find({ token }, { _id: 0 })
+      const conditions = _id ? { _id } : { token };
+      this.UserModel.find(conditions, { _id: 0, token: 0 })
         .then((user) => {
           if (!user.length) {
             res.send({
@@ -122,11 +128,323 @@ class USERINFOS {
   }
 
   /**
+   * 获取所有用户信息
+   */
+  GetAllUserInfos() {
+    this.app.get('/api/getAllUserInfos', (req, res, next) => {
+      const { token } = req.signedCookies;
+
+      this.UserModel.find({ token }, { token: 0 })
+        .then((user) => {
+          if (!user.length) {
+            res.send({
+              result: null,
+              status: 400,
+              msg: '当前用户不存在'
+            })
+          } else if (user.length >= 2) {
+            res.send({
+              result: null,
+              status: 400,
+              msg: '存在重复的当前用户'
+            })
+          } else {
+            const userRole = user[0].role;
+            const norConditions = userRole === 'SUPERADMIN' ? [{ role: 'SUPERADMIN' }] : [{ role: 'SUPERADMIN' }, {role: 'ADMIN'}];
+          
+            let {
+              page = 1,
+              size = 20,
+              keyword = '',
+              startTime = '',
+              endTime = '',
+              role = ''
+            } = req.query;
+      
+            this.UserModel.find({}, { token: 0, __v: 0 })
+              // 多条件搜索
+              .and([
+                {
+                  // 关键字模糊搜索
+                  $or: [
+                    { name: { $regex: keyword, $options: '$i' } },
+                    { mobile: { $regex: keyword, $options: '$i' } }
+                  ]
+                },
+                // 时间段搜索
+                startTime && endTime ? {
+                  createdTime: {
+                    // 时间段临界值处理
+                    $gte: new Date(startTime + ' 00:00:00'),
+                    $lte: new Date(endTime + ' 23:59:59')
+                  }
+                } : {},
+                // 用户等级搜索
+                role ? {
+                  role
+                } : {}
+              ])
+              .nor(norConditions)
+              // 分页搜索（limit/skip）
+              .limit(Number.parseInt(size))
+              .skip(Number.parseInt(page - 1) * size)
+              // 排序
+              .sort({ createdTime: -1 })
+              .then((users) => {
+                const master = JSON.parse(JSON.stringify(user[0]))
+                master.isSelf = true;
+                // 当前用户为SUPERADMIN时，能查看自身数据
+                if (userRole === 'SUPERADMIN') {
+                  users.unshift(master);
+                }
+                res.send({
+                  result: {
+                    list: users,
+                    count: users.length
+                  },
+                  status: 0,
+                  msg: '获取所有用户信息成功'
+                })
+              })
+              .catch((err) => {
+                res.send({
+                  result: null,
+                  status: 400,
+                  msg: '获取所有用户信息失败'
+                })
+              })
+          }
+        })
+        .catch((err) => {
+          res.send({
+            result: err,
+            status: 400,
+            msg: '获取用户信息出错'
+          })
+        })
+    })
+  }
+
+  /**
+   * 更新用户权限相关信息
+   */
+  UpdateUserPermissionInfos() {
+    this.app.post('/api/updateUserPermissionInfos', (req, res, next) => {
+      const { _id, permission, role } = req.body;
+      if (!_id || !permission || !role) {
+        res.send({
+          result: null,
+          status: 400,
+          msg: '参数不能为空'
+        })
+      } else {
+        const roleDesc = roleEnum.filter((i) => i.value === role)[0].label;
+        this.UserModel.findByIdAndUpdate(_id, { permission, role, roleDesc })
+          .then(() => {
+            res.send({
+              result: null,
+              status: 0,
+              msg: '用户权限相关信息更新成功'
+            })
+          })
+          .catch((err) => {
+            res.send({
+              result: null,
+              status: 400,
+              msg: '用户权限相关信息更新失败'
+            })
+          })
+      }
+    })
+  }
+
+  /**
+   * 更新用户个人信息
+   */
+  UpdateUserPersonalInfos() {
+    this.app.post('/api/updateUserPersonalInfos', (req, res, next) => {
+      const { account = '', password = '', name = '', mobile = '', avatar = '', desc = '' } = req.body;
+      if (!account || !password || !name || !mobile || !avatar || !desc) {
+        res.send({
+          result: null,
+          status: 400,
+          msg: '参数不能为空'
+        })
+      } else {
+        this.UserModel.updateOne({ account, password }, { account, password, name, mobile, avatar, desc })
+          .then(() => {
+            res.send({
+              result: null,
+              status: 0,
+              msg: '更新用户个人信息成功'
+            })
+          })
+          .catch((err) => {
+            res.send({
+              result: err,
+              status: 400,
+              msg: '更新用户个人信息失败'
+            })
+          })
+      }
+    })
+  }
+
+  /**
+   * 注册用户
+   */
+  RegisterUser () {
+    this.app.post('/api/registerUser', (req, res, next) => {
+      const { account = '', password = '', name = '', mobile = '', role = '', avatar = '', permission = 'DASHBOARD', desc = '' } = req.body;
+      if (!account || !password || !name || !mobile || !role || !avatar || !permission || !desc) {
+        res.send({
+          result: null,
+          status: 400,
+          msg: '参数不能为空'
+        })
+      } else {
+        this.UserModel.find({ account })
+          .then((user) => {
+            if (!user.length) {
+              const model = this.UserModel;
+              const saveData = new model({
+                account,
+                password,
+                name,
+                mobile,
+                avatar,
+                role,
+                desc,
+                permission,
+                createdTime: Date.now(),
+                roleDesc: roleEnum.filter((i) => i.value === role)[0].label,
+                token: account
+              })
+              saveData.save()
+                .then(() => {
+                  res.send({
+                    result: null,
+                    status: 0,
+                    msg: '用户注册成功'
+                  })
+                })
+                .catch((err) => {
+                  res.send({
+                    result: err,
+                    status: 400,
+                    msg: '用户注册失败'
+                  })
+                })
+            } else {
+              res.send({
+                result: null,
+                status: 400,
+                msg: '该账号已存在'
+              })
+            }
+          })
+          .catch((err) => {
+            res.send({
+              result: err,
+              status: 400,
+              msg: '查询用户数据出错'
+            })
+          })
+      }
+    })
+  }
+
+  /**
+   * 删除用户
+   */
+  DeleteUser() {
+    this.app.get('/api/deleteUser', (req, res, next) => {
+      const { _id } = req.query;
+      this.UserModel.findByIdAndDelete(_id)
+        .then(() => {
+          res.send({
+            result: null,
+            status: 0,
+            msg: '删除用户成功'
+          })
+        })
+        .catch((err) => {
+          res.send({
+            result: err,
+            status: 400,
+            msg: '删除用户失败'
+          })
+        })
+    })
+  }
+
+  /**
+   * 定时删除阿里云OSS对象上的多余图片文件（avatar 文件夹）
+   */
+  DeleteAliOssPhotos() {
+    console.log(
+      'avatar 阿里云OSS checking____________________________________________'
+    );
+    let timer = null;
+    // 设置定时器
+    timer = setInterval(() => {
+      this.UserModel.find({}).then(doc => {
+        /**
+         * 查找对应数据库获取当前正在用的所有图片地址
+         */
+        let mongodbPhotos = '';
+        doc.map(i => {
+          mongodbPhotos += i.avatar;
+        });
+
+        myOss.setBuckName('tanglihe-admin').then(() => {
+          /**
+           * 搜索 oss tanglihe-admin（bucket） 是否存在 avatar 文件夹
+           */
+          myOss.listDir('avatar/').then(result => {
+            /**
+             * oss 当前存在的图片
+             */
+            const OssHasPhotos = [];
+            if (result.objects && result.objects.length) {
+              /**
+               * 获取所有 oss 当前存在的 图片
+               */
+              result.objects.forEach(obj => {
+                OssHasPhotos.push(obj.name);
+              });
+              
+              /**
+               * 根据 oss 当前存在的 图片 与 对应数据库当前存在的所有图片 匹配，找出 oss 当前不被需要的图片
+               */
+              const unExist = OssHasPhotos.filter(
+                item => !mongodbPhotos.includes(item)
+              );
+              /**
+               * Oss 删除当前不被需要的图片
+               */
+              myOss.deleteMulti(unExist).then(() => {
+                console.log('Dashboard 相关的多余图片已删除');
+              });
+            }
+          });
+        });
+      });
+    }, global.deleteOssPhotoTime);
+  }
+
+  /**
    * 指定要开启的接口
    */
   Start() {
     this.Login();
     this.GetUserInfos();
+    this.GetAllUserInfos();
+    this.UpdateUserPermissionInfos();
+    this.RegisterUser();
+    this.DeleteUser();
+    this.UpdateUserPersonalInfos();
+    this.DeleteAliOssPhotos();
   }
 }
 

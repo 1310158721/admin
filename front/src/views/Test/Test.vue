@@ -1,22 +1,36 @@
 <template>
   <div>
-    Test
+    <UploadFiles
+      action="/api/upload"
+      :data="{
+        directory: 'avatar'
+      }"
+      :limit="1"
+      :defaultPics="defaultPics"
+      @removeCallBack="removeCallBack"
+      @successCallback="successCallback"
+    />
   </div>
 </template>
 
 <script>
 export default {
-  name: 'componentName',
-  components: {},
-  props: {},
   data () {
-    return {};
+    return {
+      defaultPics: []
+    };
   },
-  computed: {},
-  methods: {},
-  created () {},
-  mounted () {},
-  watch: {}
+  methods: {
+    removeCallBack (file, fileList) {
+      console.log(file);
+      console.log(fileList);
+    },
+    successCallback (response, file, fileList) {
+      console.log(response);
+      console.log(file);
+      console.log(fileList);
+    }
+  }
 };
 </script>
 

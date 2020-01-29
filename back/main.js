@@ -54,6 +54,7 @@ db.on('disconnected', () => {
 
 // 导入相关接口
 require('./src/mongodb');
+require('./src/upload/upload');
 
 // 应用监听端口
 app.listen(9000, () => {

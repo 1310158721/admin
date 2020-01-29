@@ -4,6 +4,9 @@
 import axios from 'axios';
 import Cookie from 'js-cookie';
 import { Message } from 'element-ui';
+import router from '@/router';
+import store from '@/store';
+import jsCookie from 'js-cookie';
 
 // 页面加载进度条
 import NProgress from 'nprogress';
@@ -36,6 +39,10 @@ axios.interceptors.response.use((response) => {
   const { status = 0, msg = ''} = response.data;
   if (status !== 0) {
     Message.error(msg);
+    router.push('/Login');
+    jsCookie.remove('cacheRoutes');
+    jsCookie.remove('token');
+    store.commit('SETMENULIST', null);
   }
   return response;
 }, (err) => {

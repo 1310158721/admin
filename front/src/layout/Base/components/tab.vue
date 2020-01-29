@@ -20,7 +20,7 @@ export default {
   },
   computed: {},
   methods: {
-    handleClick (tab, event) {
+    handleClick (tab) {
       const { name } = tab;
       if (name === this.$route.path) {
         return;
@@ -73,7 +73,7 @@ export default {
   },
   mounted () {},
   watch: {
-    '$route' (val) {
+    '$route' () {
       this.activeName = this.$route.path;
       this.tabRoutes = JSON.parse(jsCookie.get('cacheRoutes'));
     }

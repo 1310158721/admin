@@ -4,7 +4,7 @@ import $axios from 'axios';
 import jsCookie from 'js-cookie';
 import store from '@/store';
 
-import asyncMenuRoutes from './asyncMenuRoutes';
+import originAsyncMenuRoutes from './asyncMenuRoutes';
 import notMenuRoutes from './notMenuRoutes';
 import devRoutes from './devRoutes';
 
@@ -13,6 +13,8 @@ import 'nprogress/nprogress.css';
 
 // NProgress 的简单配置
 NProgress.configure({ easing: 'ease', speed: 500, showSpinner: false });
+
+let asyncMenuRoutes = [...originAsyncMenuRoutes];
 
 // 保存权限菜单的第一个路由（一般为最外层布局）
 const asyncMenuRoutesFirst = asyncMenuRoutes[0];
@@ -121,6 +123,7 @@ router.beforeEach((to, from, next) => {
 
   // 用户当前页面为登录页时
   if (to.path.includes('/Login')) {
+    asyncMenuRoutes = [...originAsyncMenuRoutes];
     next();
   } else {
     // 用户当前页面不为登录页，且用户登录状态失效
@@ -190,14 +193,14 @@ router.beforeEach((to, from, next) => {
                 // 添加权限菜单对应的路由
                 asyncMenuRoutesFirst.children.push(...asyncMenuRoutes);
                 router.addRoutes([asyncMenuRoutesFirst, ...notMenuRoutes]);
-                next({
-                  path: to.fullPath,
-                  replace: true
-                });
               }
+
+              next({
+                path: to.fullPath,
+                replace: true
+              });
             })
           );
-        next();
       } else {
         cacheRoutes = jsCookie.get('cacheRoutes')
           ? JSON.parse(jsCookie.get('cacheRoutes'))

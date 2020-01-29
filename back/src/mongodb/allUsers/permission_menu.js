@@ -87,6 +87,46 @@ class PERMISSIONMENU {
   }
 
   /**
+   * 将 buttons 转化为 children 传递给权限列表
+   */
+  dealListButtonsPermission(list) {
+    list.map(i => {
+      if (i.children && i.children.length) {
+        this.dealListButtonsPermission(i.children);
+      } else {
+        if (i.buttons) {
+          i.children = i.buttons;
+          delete i.buttons;
+        }
+      }
+    });
+  }
+
+  /**
+   * 获取所有导航菜单，包括将最后一层（页面级别）的 buttons 转化
+   */
+  GetAllPermissionMenu() {
+    this.app.get('/api/getAllPermissionMenu', (req, res, next) => {
+      this.MenuListModel.find({}, { _id: 0 })
+        .then((menu) => {
+          this.dealListButtonsPermission(menu);
+          res.send({
+            result: menu,
+            status: 0,
+            msg: '获取所有菜单成功'
+          })
+        })
+        .catch((err) => {
+          res.send({
+            result: err,
+            status: 400,
+            msg: '获取所有菜单失败'
+          })
+        })
+    })
+  }
+
+  /**
    * 获取用户权限菜单接口
    */
   GetPermissionMenu() {
@@ -140,6 +180,7 @@ class PERMISSIONMENU {
 
   Start() {
     this.GetPermissionMenu();
+    this.GetAllPermissionMenu();
   }
 }
 

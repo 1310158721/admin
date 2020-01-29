@@ -137,6 +137,15 @@ const asyncMenuRoutes = [
         children: null
       }
     ]
+  },
+  {
+    path: '/PermissionMenu',
+    name: 'PermissionMenu',
+    meta: {
+      title: '权限菜单'
+    },
+    component: () => import('@/views/PermissionMenu/PermissionMenu'),
+    children: null
   }
 ];
 
