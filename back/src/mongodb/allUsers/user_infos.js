@@ -160,62 +160,79 @@ class USERINFOS {
               endTime = '',
               role = ''
             } = req.query;
-      
-            this.UserModel.find({}, { token: 0, __v: 0 })
-              // 多条件搜索
-              .and([
-                {
-                  // 关键字模糊搜索
-                  $or: [
-                    { name: { $regex: keyword, $options: '$i' } },
-                    { mobile: { $regex: keyword, $options: '$i' } }
-                  ]
-                },
-                // 时间段搜索
-                startTime && endTime ? {
-                  createdTime: {
-                    // 时间段临界值处理
-                    $gte: new Date(startTime + ' 00:00:00'),
-                    $lte: new Date(endTime + ' 23:59:59')
-                  }
-                } : {},
-                // 用户等级搜索
-                role ? {
-                  role
-                } : {}
-              ])
-              .nor(norConditions)
-              // 分页搜索（limit/skip）
-              .limit(Number.parseInt(size))
-              .skip(Number.parseInt(page - 1) * size)
-              // 排序
-              .sort({ createdTime: -1 })
-              .then((users) => {
-                const master = JSON.parse(JSON.stringify(user[0]))
-                master.isSelf = true;
-                // 当前用户为SUPERADMIN时，能查看自身数据
-                if (userRole === 'SUPERADMIN') {
-                  users.unshift(master);
+
+            const $and = [
+              {
+                // 关键字模糊搜索
+                $or: [
+                  { name: { $regex: keyword, $options: '$i' } },
+                  { mobile: { $regex: keyword, $options: '$i' } }
+                ]
+              },
+              // 时间段搜索
+              startTime && endTime ? {
+                createdTime: {
+                  // 时间段临界值处理
+                  $gte: new Date(startTime + ' 00:00:00'),
+                  $lte: new Date(endTime + ' 23:59:59')
                 }
-                res.send({
-                  result: {
-                    list: users,
-                    count: users.length
-                  },
-                  status: 0,
-                  msg: '获取所有用户信息成功'
-                })
+              } : {},
+              // 用户等级搜索
+              role ? {
+                role
+              } : {}
+            ];
+
+            this.UserModel.find({})
+              .and($and)
+              .nor(norConditions)
+              .countDocuments()
+              .then((count) => {
+                this.UserModel.find({}, { token: 0, __v: 0 })
+                  // 多条件搜索
+                  .and($and)
+                  .nor(norConditions)
+                  // 分页搜索（limit/skip）
+                  .limit(Number.parseInt(size))
+                  .skip(Number.parseInt(page - 1) * size)
+                  // 排序
+                  .sort({ createdTime: -1 })
+                  .then((users) => {
+                    const master = JSON.parse(JSON.stringify(user[0]))
+                    master.isSelf = true;
+                    // 当前用户为SUPERADMIN时，能查看自身数据
+                    if (userRole === 'SUPERADMIN') {
+                      users.unshift(master);
+                      count += 1;
+                    }
+                    res.send({
+                      result: {
+                        list: users,
+                        count
+                      },
+                      status: 0,
+                      msg: '获取所有用户信息成功'
+                    })
+                  })
+                  .catch((err) => {
+                    res.send({
+                      result: null,
+                      status: 400,
+                      msg: '获取所有用户信息失败'
+                    })
+                  })
               })
               .catch((err) => {
                 res.send({
-                  result: null,
+                  result: err,
                   status: 400,
-                  msg: '获取所有用户信息失败'
+                  msg: '查询所有用户总条数失败'
                 })
               })
           }
         })
         .catch((err) => {
+          console.log(err);
           res.send({
             result: err,
             status: 400,
