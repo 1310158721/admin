@@ -156,7 +156,17 @@ const asyncMenuRoutes = [
     },
     component: () => import('@/views/PermissionMenu/PermissionMenu'),
     children: null
-  }
+  },
+  {
+    path: '/Clipboard',
+    name: 'Clipboard',
+    meta: {
+      title: 'Clipboard',
+      isRouteNode: false
+    },
+    component: () => import('@/views/Tools/Clipboard/Clipboard'),
+    children: null
+  },
 ];
 
 export default asyncMenuRoutes;
