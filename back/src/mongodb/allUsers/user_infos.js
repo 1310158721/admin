@@ -27,7 +27,8 @@ class USERINFOS {
       role: String,
       name: String,
       roleDesc: String,
-      createdTime: Number
+      createdTime: Number,
+      roleOrder: Number
     });
 
     // mongoose Model
@@ -150,8 +151,9 @@ class USERINFOS {
             })
           } else {
             const userRole = user[0].role;
-            const norConditions = userRole === 'SUPERADMIN' ? [{ role: 'SUPERADMIN' }] : [{ role: 'SUPERADMIN' }, {role: 'ADMIN'}];
-          
+            const userAccount = user[0].account;
+            // ISNOTEXIST 为不存在的参数
+            const norConditions = userRole === 'SUPERADMIN' ? (userAccount === 'tang' ? [{ISNOTEXIST: 'ISNOTEXIST'}] : [{ role: 'SUPERADMIN' }]) : [{ role: 'SUPERADMIN' }, {role: 'ADMIN'}];
             let {
               page = 1,
               size = 20,
@@ -189,6 +191,8 @@ class USERINFOS {
               .countDocuments()
               .then((count) => {
                 this.UserModel.find({}, { token: 0, __v: 0 })
+                  .sort({ roleOrder: 1 })
+                  .sort({ isSelf: -1 })
                   // 多条件搜索
                   .and($and)
                   .nor(norConditions)
@@ -198,13 +202,13 @@ class USERINFOS {
                   // 排序
                   .sort({ createdTime: -1 })
                   .then((users) => {
-                    const master = JSON.parse(JSON.stringify(user[0]))
-                    master.isSelf = true;
-                    // 当前用户为SUPERADMIN时，能查看自身数据
-                    if (userRole === 'SUPERADMIN') {
-                      users.unshift(master);
-                      count += 1;
-                    }
+                    // const master = JSON.parse(JSON.stringify(user[0]))
+                    // master.isSelf = true;
+                    // // 当前用户为SUPERADMIN时，能查看自身数据
+                    // if (userRole === 'SUPERADMIN') {
+                    //   users.unshift(master);
+                    //   count += 1;
+                    // }
                     res.send({
                       result: {
                         list: users,
@@ -324,6 +328,21 @@ class USERINFOS {
           .then((user) => {
             if (!user.length) {
               const model = this.UserModel;
+              let roleOrder = null;
+              switch (role) {
+                case 'SUPERADMIN':
+                  roleOrder = 1;
+                  break;
+                case 'ADMIN':
+                  roleOrder = 2;
+                  break;
+                case 'COMMON':
+                  roleOrder = 3;
+                  break;
+                default:
+                  roleOrder = 3;
+                  break;
+              }
               const saveData = new model({
                 account,
                 password,
@@ -335,7 +354,8 @@ class USERINFOS {
                 permission,
                 createdTime: Date.now(),
                 roleDesc: roleEnum.filter((i) => i.value === role)[0].label,
-                token: account
+                token: account,
+                roleOrder
               })
               saveData.save()
                 .then(() => {
