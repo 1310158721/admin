@@ -20,7 +20,8 @@ class PERMISSIONMENU {
       disabled: Boolean,
       children: Array,
       icon: String,
-      permission: String
+      permission: String,
+      buttons: Array
     });
 
     /**
@@ -117,6 +118,7 @@ class PERMISSIONMENU {
           })
         })
         .catch((err) => {
+          console.log(err);
           res.send({
             result: err,
             status: 400,

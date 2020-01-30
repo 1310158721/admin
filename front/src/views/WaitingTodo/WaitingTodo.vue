@@ -1,7 +1,7 @@
 <template>
   <div class="waiting-to-to-wrapper">
     <div class="conditions-wrapper mgb-20">
-      <el-button class="mgr-20" type='primary' size='small' @click.native='handleAddItem'>新增事项</el-button>
+      <el-button class="mgr-20" type='primary' size='small' v-permission='"WAITINGTODOADD"' @click.native='handleAddItem'>新增事项</el-button>
       <el-date-picker
         class="mgr-20"
         v-model="timeRange"
@@ -63,13 +63,13 @@
             {{ scope.row.isFinish | isFinishFilter }}
           </template>
         </el-table-column>
-        <el-table-column label="Operation" align='center' width='300px'>
+        <el-table-column label="Operation" align='center' width='300px' v-if="$hasPermission('WAITINGTODOFINISH,WAITINGTODOSETFIRST,WAITINGTODODELETE')">
           <template slot-scope="scope">
-            <el-button size='mini' v-if='scope.row.isFinish' @click.native='handleSwitchStatus(scope.row)'>切至未完</el-button>
-            <el-button size='mini' type='info' v-else @click.native='handleSwitchStatus(scope.row)'>切至已完</el-button>
-            <el-button size='mini' type='success' v-if='scope.row.isSetFirst' @click.native='handleSwitchIsFirst(scope.row)'>取消置顶</el-button>
-            <el-button size='mini' type='danger' v-else @click.native='handleSwitchIsFirst(scope.row)'>设为置顶</el-button>
-            <el-button size='mini' type='danger' @click.native='handleDelete(scope.row._id)'>Delete</el-button>
+            <el-button size='mini' v-if='scope.row.isFinish' @click.native='handleSwitchStatus(scope.row)' v-permission='"WAITINGTODOFINISH"'>切至未完</el-button>
+            <el-button size='mini' type='info' v-else @click.native='handleSwitchStatus(scope.row)' v-permission='"WAITINGTODOFINISH"'>切至已完</el-button>
+            <el-button size='mini' type='success' v-if='scope.row.isSetFirst' @click.native='handleSwitchIsFirst(scope.row)' v-permission='"WAITINGTODOSETFIRST"'>取消置顶</el-button>
+            <el-button size='mini' type='danger' v-else @click.native='handleSwitchIsFirst(scope.row)' v-permission='"WAITINGTODOSETFIRST"'>设为置顶</el-button>
+            <el-button size='mini' type='danger' @click.native='handleDelete(scope.row._id)' v-permission='"WAITINGTODODELETE"'>Delete</el-button>
           </template>
         </el-table-column>
       </el-table>
