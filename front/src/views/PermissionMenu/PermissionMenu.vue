@@ -1,7 +1,7 @@
 <template>
   <div class="permission-menu-wrapper">
     <div class="conditions-wrapper mgb-20">
-      <el-button class="mgr-20" type='primary' size='small' @click='permissionAdd'>新增用户</el-button>
+      <el-button class="mgr-20" type='primary' size='small' v-permission='"PERMISSIONMENUADD"' @click='permissionAdd'>新增用户</el-button>
       <el-date-picker
         class="mgr-20"
         v-model="timeRange"
@@ -238,7 +238,7 @@ export default {
     flex: 1;
     height: 100%;
     /deep/.el-table {
-      .is-master {
+      .is-master td {
         background-color: rgba(#42B983, .5);
       }
     }
