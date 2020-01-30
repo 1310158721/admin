@@ -39,10 +39,6 @@ axios.interceptors.response.use((response) => {
   const { status = 0, msg = ''} = response.data;
   if (status !== 0) {
     Message.error(msg);
-    router.push('/Login');
-    jsCookie.remove('cacheRoutes');
-    jsCookie.remove('token');
-    store.commit('SETMENULIST', null);
   }
   return response;
 }, (err) => {

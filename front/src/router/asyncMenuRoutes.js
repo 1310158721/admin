@@ -24,6 +24,16 @@ const asyncMenuRoutes = [
     children: null
   },
   {
+    path: '/WaitingTodo',
+    name: 'WaitingTodo',
+    meta: {
+      title: '待办列表',
+      isRouteNode: false
+    },
+    component: () => import('@/views/WaitingTodo/WaitingTodo'),
+    children: null
+  },
+  {
     path: '/NestedRoutes',
     name: 'NestedRoutes',
     meta: {

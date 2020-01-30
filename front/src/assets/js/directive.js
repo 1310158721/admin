@@ -2,6 +2,7 @@ import Vue from 'vue';
 import store from '@/store';
 import { Message } from 'element-ui';
 
+// 根据一个权限值判断是否显示
 Vue.directive('permission', {
   // 当绑定该指令的元素插入到 DOM 中时，第一个参数为绑定的 DOM 元素
   inserted (el, binding) {
@@ -16,6 +17,7 @@ Vue.directive('permission', {
   }
 });
 
+// 多权限值时使用，拥有其中一个便显示
 Vue.prototype.$hasPermission = function (checkPermission) {
   const checkPermissionArr = checkPermission.replace(/ /g, '').split(',');
   const { permission } = store.state.userInfo;
@@ -26,8 +28,9 @@ Vue.prototype.$hasPermission = function (checkPermission) {
     }
   });
   return canShow;
-}
+};
 
+// 复制到粘贴板
 Vue.directive('clipboard', {
   inserted (el, binding) {
     el.style.cursor = 'pointer';
@@ -48,6 +51,12 @@ Vue.directive('clipboard', {
       document.execCommand('Copy');
       Message.success('复制成功');
       inputDom.remove();
-    }
+    };
+  }
+});
+
+Vue.directive('focus', {
+  inserted (el) {
+    el.focus();
   }
 });
