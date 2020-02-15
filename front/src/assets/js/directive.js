@@ -1,6 +1,8 @@
 import Vue from 'vue';
 import store from '@/store';
 import { Message } from 'element-ui';
+import hljs from 'highlight.js';
+import 'highlight.js/styles/tomorrow-night-eighties.css'; // 样式文件
 
 // 根据一个权限值判断是否显示
 Vue.directive('permission', {
@@ -60,3 +62,22 @@ Vue.directive('focus', {
     el.focus();
   }
 });
+
+Vue.directive('highlight',function (el) {
+  let blocks = el.querySelectorAll('pre code');
+  el.style.lineHeight = '26px';
+  blocks.forEach((block)=>{
+    hljs.highlightBlock(block);
+  });
+});
+
+Vue.prototype.$highlight = function (el, cb) {
+  let blocks = el.querySelectorAll('pre code');
+  el.style.lineHeight = '26px';
+  blocks.forEach((block, index)=>{
+    hljs.highlightBlock(block);
+    if (index === blocks.length - 1) {
+      cb && cb();
+    }
+  });
+};

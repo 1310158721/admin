@@ -1,1 +1,1 @@
-const global = require('./global');
+require('./global');

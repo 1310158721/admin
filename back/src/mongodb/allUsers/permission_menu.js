@@ -21,7 +21,8 @@ class PERMISSIONMENU {
       children: Array,
       icon: String,
       permission: String,
-      buttons: Array
+      buttons: Array,
+      order: Number
     });
 
     /**
@@ -43,7 +44,9 @@ class PERMISSIONMENU {
       role: String,
       name: String,
       roleDesc: String,
-      createdTime: Number
+      createdTime: Number,
+      roleOrder: Number,
+      isSelf: Boolean
     });
 
     /**
@@ -108,21 +111,38 @@ class PERMISSIONMENU {
    */
   GetAllPermissionMenu() {
     this.app.get('/api/getAllPermissionMenu', (req, res, next) => {
-      this.MenuListModel.find({}, { _id: 0 })
-        .then((menu) => {
-          this.dealListButtonsPermission(menu);
-          res.send({
-            result: menu,
-            status: 0,
-            msg: '获取所有菜单成功'
-          })
+      const { token } = req.signedCookies;
+      this.UserModel.find({ token })
+        .then((user) => {
+          const { isSelf } = user[0];
+          this.MenuListModel.find({}, { _id: 0 })
+            .sort({ order: 1 })
+            .then((menu) => {
+              this.dealListButtonsPermission(menu);
+              if (!isSelf) {
+                menu = menu.filter((i) => i.permission !== 'PERMISSIONMANAGE')
+              }
+              console.log(menu);
+              res.send({
+                result: menu,
+                status: 0,
+                msg: '获取所有菜单成功'
+              })
+            })
+            .catch((err) => {
+              console.log(err);
+              res.send({
+                result: err,
+                status: 400,
+                msg: '获取所有菜单失败'
+              })
+            })
         })
         .catch((err) => {
-          console.log(err);
           res.send({
             result: err,
             status: 400,
-            msg: '获取所有菜单失败'
+            msg: '获取权限菜单时，查询用户信息失败'
           })
         })
     })
@@ -134,7 +154,6 @@ class PERMISSIONMENU {
   GetPermissionMenu() {
     this.app.get('/api/getUserPsermissionMenu', (req, res, next) => {
       const { token } = req.signedCookies;
-
       this.UserModel.find({ token })
         .then((user) => {
           if (!user.length) {
@@ -152,6 +171,7 @@ class PERMISSIONMENU {
           } else {
             const hasPermission = user[0].permission.split(',');
             this.MenuListModel.find({}, { _id: 0 })
+              .sort({ order: 1 })
               .then((list) => {
                 this.loopMatchList(hasPermission, list);
                 this.delEmptyArray(list);

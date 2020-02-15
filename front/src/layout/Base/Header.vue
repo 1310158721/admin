@@ -1,10 +1,10 @@
 <template>
   <div class="header-wrapper">
-    <i v-if='!$store.state.isFixedSystemAside' class="iconfont collapse-icon" :class="collapseClass" @click='collapseIconClick' />
-    <i v-else class="iconfont icon-tudingguding collapse-icon"></i>
-    <MyBreadcrumb />
+    <i id='guide-collapse' v-if='!$store.state.isFixedSystemAside' class="iconfont collapse-icon" :class="collapseClass" @click='collapseIconClick' />
+    <i id='guide-collapse' v-else class="iconfont icon-tudingguding collapse-icon"></i>
+    <MyBreadcrumb id='guide-breadcrum' />
     <div style="flex: 1;"></div>
-    <UserCenter />
+    <UserCenter id='guide-user-center' />
   </div>
 </template>
 

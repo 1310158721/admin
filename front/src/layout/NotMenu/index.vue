@@ -36,6 +36,8 @@ export default {
   .el-header {
     height: 50px !important;
     box-shadow: 0px 10px 10px rgba(0,0,0,.1);
+    position: relative;
+    z-index: 100;
     .el-page-header {
       height: 50px;
       line-height: 50px;

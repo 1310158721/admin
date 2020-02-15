@@ -11,19 +11,19 @@ import devRoutes from './devRoutes';
 import NProgress from 'nprogress'; // 页面加载进度条
 import 'nprogress/nprogress.css';
 
+Vue.use(VueRouter);
+
 // NProgress 的简单配置
 NProgress.configure({ easing: 'ease', speed: 500, showSpinner: false });
+
+if (process.env.NODE_ENV === 'development') {
+  originAsyncMenuRoutes.push(...devRoutes);
+}
 
 let asyncMenuRoutes = [...originAsyncMenuRoutes];
 
 // 保存权限菜单的第一个路由（一般为最外层布局）
 const asyncMenuRoutesFirst = asyncMenuRoutes[0];
-
-Vue.use(VueRouter);
-
-if (process.env.NODE_ENV === 'development') {
-  asyncMenuRoutes.push(...devRoutes);
-}
 
 const fixRouteConfig = [
   {
@@ -123,7 +123,6 @@ router.beforeEach((to, from, next) => {
 
   // 用户当前页面为登录页时
   if (to.path.includes('/Login')) {
-    asyncMenuRoutes = [...originAsyncMenuRoutes];
     next();
   } else {
     // 用户当前页面不为登录页，且用户登录状态失效
@@ -135,6 +134,7 @@ router.beforeEach((to, from, next) => {
     } else {
       // 用户当前登录状态不失效，单 vuex 的 menuList 为 null 时
       if (!store.state.menuList) {
+        asyncMenuRoutes = [...originAsyncMenuRoutes];
         $axios
           .all([
             $axios.get('/getUserInfos'),

@@ -8,7 +8,7 @@
       class="permission-form"
       label-position="left"
     >
-      <el-row :gutter="20">
+      <el-row :gutter="20" class="form-content-wrapper">
         <el-col :span="12">
           <el-form-item size="small" label="账号：" prop="account">
             <el-input size="small" v-model="userInfos.account" />
@@ -143,7 +143,7 @@ export default {
   },
   computed: {
     roleEnum () {
-      if (this.$store.state.userInfo.role === 'SUPERADMIN') {
+      if (this.$store.state.userInfo.isSelf) {
         return roleEnum;
       } else {
         return roleEnum.filter(i => i.value !== 'SUPERADMIN');
@@ -245,12 +245,26 @@ export default {
 
 <style lang="scss" scoped>
 .permission-add-page-wrapper {
-  min-height: 100%;
+  height: 100%;
   width: 100%;
   padding: 20px;
   box-sizing: border-box;
   .permission-form {
-    // width: 500px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    .form-content-wrapper {
+      flex: 1;
+      height: 100%;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: row;
+      .el-col {
+        flex: 1;
+        height: 100%;
+        overflow-y: auto;
+      }
+    }
     .button-wrapper {
       text-align: center;
       .el-button {

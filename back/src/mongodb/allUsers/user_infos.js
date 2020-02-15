@@ -28,7 +28,8 @@ class USERINFOS {
       name: String,
       roleDesc: String,
       createdTime: Number,
-      roleOrder: Number
+      roleOrder: Number,
+      isSelf: Boolean
     });
 
     // mongoose Model
@@ -434,9 +435,9 @@ class USERINFOS {
           mongodbPhotos += i.avatar;
         });
 
-        myOss.setBuckName('tanglihe-admin').then(() => {
+        myOss.setBuckName(global.buckName).then(() => {
           /**
-           * 搜索 oss tanglihe-admin（bucket） 是否存在 avatar 文件夹
+           * 搜索 oss global.buckName 是否存在 avatar 文件夹
            */
           myOss.listDir('avatar/').then(result => {
             /**
@@ -461,7 +462,7 @@ class USERINFOS {
                * Oss 删除当前不被需要的图片
                */
               myOss.deleteMulti(unExist).then(() => {
-                console.log('Dashboard 相关的多余图片已删除');
+                console.log('Avatar 相关的多余图片已删除');
               });
             }
           });

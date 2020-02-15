@@ -1,5 +1,5 @@
 <template>
-  <div class="my-aside-wrapper">
+  <div class="my-aside-wrapper" id='guide-aside'>
     <div class="my-logo" v-if='$store.state.isShowSystemLogo'>
       我是logo
     </div>

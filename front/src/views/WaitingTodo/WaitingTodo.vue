@@ -1,9 +1,9 @@
 <template>
-  <div class="waiting-to-to-wrapper">
+  <div class="waiting-to-to-wrapper list-wrapper">
     <div class="conditions-wrapper mgb-20">
       <el-button class="mgr-20" type='primary' size='small' v-permission='"WAITINGTODOADD"' @click.native='handleAddItem'>新增事项</el-button>
       <el-date-picker
-        class="mgr-20"
+        class="mgr-20 w-240"
         v-model="timeRange"
         type="daterange"
         range-separator="至"
@@ -13,7 +13,7 @@
         @change="timePickerChange"
         :picker-options='pickerOptions'
       />
-      <el-select class="mgr-20" size="small" clearable v-model="params.rank" @change='rankChange' placeholder="请选择事项级别">
+      <el-select class="mgr-20 w-140" size="small" clearable v-model="params.rank" @change='rankChange' placeholder="请选择事项级别">
         <el-option
           v-for="item in waitingListRank"
           :key="item.value"
@@ -21,7 +21,7 @@
           :value="item.value"
         />
       </el-select>
-      <el-select size="small" clearable v-model="params.isFinish" @change='isFinishChange' placeholder="请选择事项是否完成">
+      <el-select class="w-180" size="small" clearable v-model="params.isFinish" @change='isFinishChange' placeholder="请选择事项是否完成">
         <el-option
           v-for="item in waitingListIsFinish"
           :key="item.value"
@@ -31,16 +31,15 @@
       </el-select>
       <span class="self-adaption"></span>
       <SearchBar
-        class="search-bar"
+        class="search-bar w-240"
         placeholder="Name/Mobile"
         v-model="params.keyword"
         @sureKeyword="sureKeyword"
       />
     </div>
-    <div class="table-wrapper">
+    <div class="table-wrapper" v-loading='isLoading'>
       <el-table
         :data="list"
-        v-loading='!list'
         border
         height='100%'
         stripe
@@ -98,8 +97,10 @@
 import { $formDate } from '@/assets/js/utils';
 import { waitingListRank } from '@/assets/js/enum';
 import AddWaitingDialog from './Components/AddWaitingDialog';
+import LISTMINXIN from '@/mixin/list-mixin';
 export default {
   name: 'WaitingTodo',
+  mixins: [LISTMINXIN],
   components: {
     AddWaitingDialog
   },
@@ -157,7 +158,10 @@ export default {
   },
   methods: {
     // 获取列表信息
-    getWaitingList () {
+    GETLIST () {
+      this.isLoading = true;
+      this.params.size = this.size;
+      this.params.page = this.page;
       this.$axios.get('/getWaitingList', { params: this.params })
         .then((res) => {
           const { status, result } = res.data;
@@ -165,6 +169,7 @@ export default {
             const { list, count } = result;
             this.list = list;
             this.count = count;
+            this.isLoading = false;
           }
         });
     },
@@ -184,16 +189,6 @@ export default {
     tableRowClassName ({ row }) {
       return row.isSetFirst ? 'is-set-first' : '';
     },
-    // 改变分页器size
-    handleSizeChange (val) {
-      this.params.size = val;
-      this.getWaitingList();
-    },
-    // 改变分页器page
-    handleCurrentChange (val) {
-      this.params.page = val;
-      this.getWaitingList();
-    },
     // 添加列表Item
     handleAddItem () {
       this.addWaitingDialog = true;
@@ -205,14 +200,14 @@ export default {
       this.params.endTime = null;
       this.params.rank = null;
       this.params.isFinish = null;
-      this.getWaitingList();
+      this.GETLIST();
     },
     // 时间段搜索
     timePickerChange () {
       this.params.rank = null;
       this.params.isFinish = null;
       this.params.keyword = null;
-      this.getWaitingList();
+      this.GETLIST();
     },
     // rank选择器搜索
     rankChange () {
@@ -221,7 +216,7 @@ export default {
       this.params.endTime = null;
       this.params.isFinish = null;
       this.params.keyword = null;
-      this.getWaitingList();
+      this.GETLIST();
     },
     // isFinish选择器搜索
     isFinishChange () {
@@ -230,13 +225,13 @@ export default {
       this.params.endTime = null;
       this.params.rank = null;
       this.params.keyword = null;
-      this.getWaitingList();
+      this.GETLIST();
     },
     // 关闭弹窗回调
     closeAddWaitingDialog (isSave) {
       if (isSave) {
         this.addWaitingDialog = false;
-        this.getWaitingList();
+        this.GETLIST();
       } else {
         this.addWaitingDialog = false;
       }
@@ -252,7 +247,7 @@ export default {
             .then((res) => {
               const { status } = res.data;
               if (status === 0) {
-                this.getWaitingList();
+                this.GETLIST();
               }
             });
         }).catch(() => {
@@ -273,7 +268,7 @@ export default {
             .then((res) => {
               const { status } = res.data;
               if (status === 0) {
-                this.getWaitingList();
+                this.GETLIST();
               }
             });
         }).catch(() => {
@@ -294,7 +289,7 @@ export default {
             .then((res) => {
               const { status } = res.data;
               if (status === 0) {
-                this.getWaitingList();
+                this.GETLIST();
               }
             });
         }).catch(() => {
@@ -306,50 +301,16 @@ export default {
     }
   },
   filters: {
-    createdTimeFilters (date) {
-      return $formDate(new Date(date), 'yyyy-MM-dd hh:mm:ss');
-    },
     isFinishFilter (boolean) {
       return boolean ? '是' : '否';
     }
   },
   created () {
-    this.getWaitingList();
+    this.GETLIST();
   },
   mounted () {},
   watch: {}
 };
 </script>
 
-<style lang="scss" scoped>
-.waiting-to-to-wrapper {
-  width: 100%;
-  height: 100%;
-  overflow-y: hidden;
-  display: flex;
-  flex-direction: column;
-  .conditions-wrapper {
-    height: 32px;
-    display: flex;
-    flex-direction: row;
-    .self-adaption {
-      flex: 1;
-    }
-  }
-  .table-wrapper {
-    flex: 1;
-    height: 100%;
-    /deep/.el-table {
-      .is-set-first td {
-        background-color: rgba(0,0,0,.3)!important;
-      }
-    }
-  }
-  .pagination-wrapper {
-    height: 32px;
-    .el-pagination {
-      float: right;
-    }
-  }
-}
-</style>
+<style lang="scss" scoped></style>

@@ -4,7 +4,6 @@ const asyncMenuRoutes = [
     name: 'LayoutBase',
     meta: {
       title: 'LayoutBase',
-      isRouteNode: true,
       isLayout: true
     },
     component: () => import('@/layout/Base'),
@@ -17,8 +16,7 @@ const asyncMenuRoutes = [
     path: '/Dashboard',
     name: 'Dashboard',
     meta: {
-      title: 'Dashboard',
-      isRouteNode: false
+      title: 'Dashboard'
     },
     component: () => import('@/views/Dashboard/Dashboard'),
     children: null
@@ -27,8 +25,7 @@ const asyncMenuRoutes = [
     path: '/WaitingTodo',
     name: 'WaitingTodo',
     meta: {
-      title: '待办列表',
-      isRouteNode: false
+      title: '待办列表'
     },
     component: () => import('@/views/WaitingTodo/WaitingTodo'),
     children: null
@@ -38,7 +35,6 @@ const asyncMenuRoutes = [
     name: 'NestedRoutes',
     meta: {
       title: '嵌套路由',
-      isRouteNode: true,
       redirect: '/NestedRoutes-1-1'
     },
     component: () => import('@/views/NestedRoutes/NestedRoutes'),
@@ -51,7 +47,6 @@ const asyncMenuRoutes = [
         name: 'NestedRoutes-1',
         meta: {
           title: '路由-1',
-          isRouteNode: true,
           redirect: '/NestedRoutes-1-1'
         },
         redirect: {
@@ -63,8 +58,7 @@ const asyncMenuRoutes = [
             path: '/NestedRoutes-1-1',
             name: 'NestedRoutes-1-1',
             meta: {
-              title: '路由-1-1',
-              isRouteNode: false
+              title: '路由-1-1'
             },
             component: () => import('@/views/NestedRoutes/NestedRoutes-1-1'),
             children: null
@@ -74,7 +68,6 @@ const asyncMenuRoutes = [
             name: 'NestedRoutes-1-2',
             meta: {
               title: '路由-1-2',
-              isRouteNode: true,
               redirect: '/NestedRoutes-1-2-1'
             },
             component: () => import('@/views/NestedRoutes/NestedRoutes-1-2'),
@@ -86,8 +79,7 @@ const asyncMenuRoutes = [
                 path: '/NestedRoutes-1-2-1',
                 name: 'NestedRoutes-1-2-1',
                 meta: {
-                  title: '路由-1-2-1',
-                  isRouteNode: false
+                  title: '路由-1-2-1'
                 },
                 component: () => import('@/views/NestedRoutes/NestedRoutes-1-2-1'),
                 children: null
@@ -96,8 +88,7 @@ const asyncMenuRoutes = [
                 path: '/NestedRoutes-1-2-2',
                 name: 'NestedRoutes-1-2-2',
                 meta: {
-                  title: '路由-1-2-2',
-                  isRouteNode: false
+                  title: '路由-1-2-2'
                 },
                 component: () => import('@/views/NestedRoutes/NestedRoutes-1-2-2'),
                 children: null
@@ -106,8 +97,7 @@ const asyncMenuRoutes = [
                 path: '/NestedRoutes-1-2-3',
                 name: 'NestedRoutes-1-2-3',
                 meta: {
-                  title: '路由-1-2-3',
-                  isRouteNode: false
+                  title: '路由-1-2-3'
                 },
                 component: () => import('@/views/NestedRoutes/NestedRoutes-1-2-3'),
                 children: null
@@ -118,8 +108,7 @@ const asyncMenuRoutes = [
             path: '/NestedRoutes-1-3',
             name: 'NestedRoutes-1-3',
             meta: {
-              title: '路由-1-3',
-              isRouteNode: false
+              title: '路由-1-3'
             },
             component: () => import('@/views/NestedRoutes/NestedRoutes-1-3'),
             children: null
@@ -130,8 +119,7 @@ const asyncMenuRoutes = [
         path: '/NestedRoutes-2',
         name: 'NestedRoutes-2',
         meta: {
-          title: '路由-2',
-          isRouteNode: false
+          title: '路由-2'
         },
         component: () => import('@/views/NestedRoutes/NestedRoutes-2'),
         children: null
@@ -140,8 +128,7 @@ const asyncMenuRoutes = [
         path: '/NestedRoutes-3',
         name: 'NestedRoutes-3',
         meta: {
-          title: '路由-3',
-          isRouteNode: false
+          title: '路由-3'
         },
         component: () => import('@/views/NestedRoutes/NestedRoutes-3'),
         children: null
@@ -161,12 +148,92 @@ const asyncMenuRoutes = [
     path: '/Clipboard',
     name: 'Clipboard',
     meta: {
-      title: 'Clipboard',
-      isRouteNode: false
+      title: 'Clipboard'
     },
     component: () => import('@/views/Tools/Clipboard/Clipboard'),
     children: null
   },
+  {
+    path: '/Viewer',
+    name: 'Viewer',
+    meta: {
+      title: 'Viewer'
+    },
+    component: () => import('@/views/Tools/Viewer/Viewer'),
+    children: null
+  },
+  {
+    path: '/VueDraggable',
+    name: 'VueDraggable',
+    meta: {
+      title: 'VueDraggable'
+    },
+    component: () => import('@/views/Tools/VueDraggable/VueDraggable'),
+    children: null
+  },
+  {
+    path: '/BaiduMap',
+    name: 'BaiduMap',
+    meta: {
+      title: '百度地图'
+    },
+    component: () => import('@/views/Map/BaiduMap/BaiduMap'),
+    children: null
+  },
+  {
+    path: '/Memorandum',
+    name: 'Memorandum',
+    meta: {
+      title: '备忘录'
+    },
+    component: () => import('@/views/Memorandum/Memorandum'),
+    children: null
+  },
+  {
+    path: '/Echarts',
+    name: 'Echarts',
+    meta: {
+      title: 'Echarts'
+    },
+    component: () => import('@/views/Charts/Echarts/Echarts'),
+    children: null
+  },
+  {
+    path: '/Demo',
+    name: 'Demo',
+    meta: {
+      title: 'Demo'
+    },
+    component: () => import('@/views/Demo/Demo'),
+    children: null
+  },
+  {
+    path: '/Guide',
+    name: 'Guide',
+    meta: {
+      title: '新手引导'
+    },
+    component: () => import('@/views/Guide/Guide'),
+    children: null
+  },
+  {
+    path: '/FilesDownLoad',
+    name: 'FilesDownLoad',
+    meta: {
+      title: '下载文件'
+    },
+    component: () => import('@/views/Files/FilesDownLoad'),
+    children: null
+  },
+  {
+    path: '/FilesUpload',
+    name: 'FilesUpload',
+    meta: {
+      title: '上传文件'
+    },
+    component: () => import('@/views/Files/FilesUpload'),
+    children: null
+  }
 ];
 
 export default asyncMenuRoutes;

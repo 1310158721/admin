@@ -8,7 +8,7 @@
       class="permission-form"
       label-position="left"
     >
-      <el-row :gutter="20">
+      <el-row :gutter="20" class="form-content-wrapper">
         <el-col :span="12">
           <el-form-item size="small" label="账号：">
             <el-input size="small" disabled v-model="userInfos.account" />
@@ -26,7 +26,9 @@
             <el-input size="small" disabled v-model="userInfos.createdTime" />
           </el-form-item>
           <el-form-item size="small" label="头像：">
-            <img :src="userInfos.avatar" width="144" height="144" />
+            <div class="images" v-viewer.static="{inline: false}">
+              <img :src="userInfos.avatar" width="144" height="144" />
+            </div>
           </el-form-item>
           <el-form-item size="small" label="级别：">
             <el-select
@@ -184,10 +186,23 @@ export default {
             this.userInfos.account === this.$store.state.userInfo.account &&
             this.userInfos.password === this.$store.state.userInfo.password
           ) {
-            this.SETMENULIST(null);
             this.isLoading = false;
             this.$message.success(msg);
-            this.$router.back();
+            if (this.userInfos.isSelf) {
+              /**
+               * 当前修改操作是主人对自身数据进行修改时，则跳转路由后要刷新页面
+               * 有可能主人开启了某些权限菜单，但这时还没有添加菜单对应的路由组件
+               * 此时跳转则会直接重定向到404页面
+               */
+              this.$router.push({
+                name: 'PermissionMenu',
+                params: {
+                  isShouldRefresh: true
+                }
+              });
+            } else {
+              this.$router.back();
+            }
           } else {
             this.isLoading = false;
             this.$message.success(msg);
@@ -236,11 +251,31 @@ export default {
 
 <style lang="scss" scoped>
 .permission-edit-page-wrapper {
-  min-height: 100%;
+  height: 100%;
   width: 100%;
   padding: 20px;
   box-sizing: border-box;
   .permission-form {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    .form-content-wrapper {
+      flex: 1;
+      height: 100%;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: row;
+      .el-col {
+        flex: 1;
+        height: 100%;
+        overflow-y: auto;
+      }
+      .images {
+        img {
+          cursor: pointer;
+        }
+      }
+    }
     .button-wrapper {
       text-align: center;
       .el-button {

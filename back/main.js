@@ -13,7 +13,7 @@ app.use(bodyParser.json());
 app.use(cookieParser('admin')); // cookieParser 加密 token
 // express 静态托管资源
 app.use(express.static('./'));
-// app.use(express.static('./dist/'));
+app.use(express.static('./dist/'));
 // 解析 application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -30,6 +30,10 @@ app.all('*', (req, res, next) => {
   res.header('Content-Type', 'application/json;charset=utf-8');
   
   next();
+});
+
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/dist/index.html');
 });
 
 // 连接数据库 adminAllUser
@@ -55,8 +59,9 @@ db.on('disconnected', () => {
 // 导入相关接口
 require('./src/mongodb');
 require('./src/upload/upload');
+require('./src/public/createFiles');
 
 // 应用监听端口
-app.listen(9000, () => {
-  console.log('server is running at http://127.0.0.1:9000/');
+app.listen(10000, () => {
+  console.log('server is running at http://127.0.0.1:10000/');
 });

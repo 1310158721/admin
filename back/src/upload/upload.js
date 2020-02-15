@@ -31,7 +31,7 @@ class UPLOAD {
           msg: '文件太大了'
         })
       } else {
-        myOss.setBuckName('tanglihe-admin').then(() => {
+        myOss.setBuckName(global.buckName).then(() => {
           // 上传阿里云
           myOss.put(`${destination}/${filename}`, `${directory}/${filename}`)
           .then(data => {

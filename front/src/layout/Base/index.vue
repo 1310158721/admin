@@ -3,7 +3,7 @@
     <MyAside />
     <el-container id='app-right-aside' :class="[$store.state.isFixedSystemHeader ? 'fixed-header' : 'release-header']">
       <MyHeader class='app-header' />
-      <my-tab v-if='$store.state.isShowSystemTabView' />
+      <my-tab id='guide-tabs' v-if='$store.state.isShowSystemTabView' />
       <div id='app-content' :class="{ 'is-show-tabs': $store.state.isShowSystemTabView }">
         <MyContent />
       </div>

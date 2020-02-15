@@ -73,3 +73,60 @@ export const $formDate = (date, fmt = 'yyyy-MM-dd hh:mm:ss') => {
   }
   return fmt;
 };
+
+/**
+ * jsonp 请求
+ *  options {
+ *  url
+ *  data
+ *  callback
+ *  success function
+ *  fail    function
+ * }
+ */
+export const $jsonp = (options) => {
+  options = options || {};
+  if (!options.url || !options.callback) {
+    return;
+  }
+  // 创建 script 标签并加入到页面中
+  let callbackName = ('jsonp_' + Math.random()).replace('.', '');
+  let oHead = document.getElementsByTagName('head')[0];
+  options.data[options.callback] = callbackName;
+  let params = formatParams(options.data);
+  let oS = document.createElement('script');
+  oHead.appendChild(oS);
+  // 创建jsonp回调函数
+  window[callbackName] = (json) => {
+    oHead.removeChild(oS);
+    clearTimeout(oS.timer);
+    window[callbackName] = null;
+    options.success && options.success(json);
+  };
+  // 请求失败
+  oS.onerror = (err) => {
+    window[callbackName] = null;
+    oHead.removeChild(oS);
+    options.fail && options.fail(err);
+  };
+  // 发送请求
+  oS.src = options.url + '?' + params;
+  // 超时处理
+  if (options.time) {
+    oS.timer = setTimeout(() => {
+      window[callbackName] = null;
+      oHead.removeChild(oS);
+      options.fail && options.fail({
+        message: '超时'
+      });
+    }, options.time);
+  }
+  // 格式化参数
+  function formatParams (data) {
+    let arr = [];
+    for (let name in data) {
+      arr.push(encodeURIComponent(name) + '=' + encodeURIComponent(data[name]));
+    }
+    return arr.join('&');
+  }
+};
