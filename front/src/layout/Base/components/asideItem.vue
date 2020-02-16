@@ -3,7 +3,7 @@
   <div class="menu-item-wrapper">
     <el-menu-item :class="{'is-not-first-loop-item': !isFirstLoopItem}" v-if="!item.children || !item.children.length" :index="item.path">
       <i v-if="isFirstLoopItem" class="icon iconfont" :class="item.icon || this.icon"></i>
-      <span slot="title">{{ item.title }}</span>
+      <span slot="title">{{ $t('menuList.' + item.title) }}</span>
     </el-menu-item>
     <el-submenu
       v-else
@@ -13,7 +13,7 @@
     >
       <template slot="title">
         <i v-if="isFirstLoopItem" class="icon iconfont" :class="item.icon || this.icon"></i>
-        <span slot="title" class="title">{{ item.title }}</span>
+        <span slot="title" class="title">{{ $t('menuList.' + item.title) }}</span>
       </template>
       <template v-for="(_item, _index) in item.children">
         <!-- 递归调用自身 -->

@@ -6,9 +6,9 @@
     :before-close='handleClose'
     :with-header="false">
     <div class="body-content">
-      <h3 class="drawer-title">系统布局配置</h3>
+      <h3 class="drawer-title">{{ $t('SystemLayoutConfig.系统布局配置') }}</h3>
       <div class="drawer-item">
-        <span class="item-tip">开启 Tags-View</span>
+        <span class="item-tip">{{ $t('SystemLayoutConfig.Tags-View') }}</span>
         <span class="item-handler">
           <el-switch
             v-model="$store.state.isShowSystemTabView"
@@ -18,7 +18,7 @@
         </span>
       </div>
       <div class="drawer-item">
-        <span class="item-tip">固定 Aside</span>
+        <span class="item-tip">{{ $t('SystemLayoutConfig.Aside') }}</span>
         <span class="item-handler">
           <el-switch
             v-model="$store.state.isFixedSystemAside"
@@ -29,7 +29,7 @@
       </div>
 
       <div class="drawer-item">
-        <span class="item-tip">侧边栏 Logo</span>
+        <span class="item-tip">{{ $t('SystemLayoutConfig.Logo') }}</span>
         <span class="item-handler">
           <el-switch
             v-model="$store.state.isShowSystemLogo"
@@ -40,10 +40,21 @@
       </div>
 
       <div class="drawer-item">
-        <span class="item-tip">固定 Header</span>
+        <span class="item-tip">{{ $t('SystemLayoutConfig.Header') }}</span>
         <span class="item-handler">
           <el-switch
             v-model="$store.state.isFixedSystemHeader"
+            active-color="#13ce66"
+            inactive-color="#ff4949"
+          />
+        </span>
+      </div>
+
+      <div class="drawer-item">
+        <span class="item-tip">{{ $t('SystemLayoutConfig.Multilingual') }}</span>
+        <span class="item-handler">
+          <el-switch
+            v-model="$store.state.isOpenMultilingual"
             active-color="#13ce66"
             inactive-color="#ff4949"
           />

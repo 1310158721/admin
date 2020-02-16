@@ -10,19 +10,19 @@
     >
       <el-row :gutter="20" class="form-content-wrapper">
         <el-col :span="12">
-          <el-form-item size="small" label="账号：" prop="account">
+          <el-form-item size="small" :label="$t('AddUserPage.账号') + ':'" prop="account">
             <el-input size="small" v-model="userInfos.account" />
           </el-form-item>
-          <el-form-item size="small" label="密码：" prop="password">
+          <el-form-item size="small" :label="$t('AddUserPage.密码') + ':'" prop="password">
             <el-input size="small" v-model="userInfos.password" />
           </el-form-item>
-          <el-form-item size="small" label="名称：" prop="name">
+          <el-form-item size="small" :label="$t('AddUserPage.名称') + ':'" prop="name">
             <el-input size="small" v-model="userInfos.name" />
           </el-form-item>
-          <el-form-item size="small" label="号码：" prop="mobile">
+          <el-form-item size="small" :label="$t('AddUserPage.号码') + ':'" prop="mobile">
             <el-input size="small" maxlength='11' v-model="userInfos.mobile" />
           </el-form-item>
-          <el-form-item size="small" label="头像：" prop="avatar">
+          <el-form-item size="small" :label="$t('AddUserPage.头像') + ':'" prop="avatar">
             <UploadFiles
               action="/api/upload"
               :data="{
@@ -32,7 +32,7 @@
               @successCallback="successCallback"
             />
           </el-form-item>
-          <el-form-item size="small" label="级别：">
+          <el-form-item size="small" :label="$t('AddUserPage.级别') + ':'">
             <el-select
               v-model="userInfos.role"
               placeholder="请选择"
@@ -45,7 +45,7 @@
               />
             </el-select>
           </el-form-item>
-          <el-form-item size="small" label="描述：" prop="desc">
+          <el-form-item size="small" :label="$t('AddUserPage.描述') + ':'" prop="desc">
             <el-input
               type="textarea"
               :autosize="{ minRows: 3, maxRows: 6 }"
@@ -57,7 +57,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item size="small" label="权限菜单：">
+          <el-form-item size="small" :label="$t('AddUserPage.权限菜单') + ':'">
             <el-tree
               v-if="menuList"
               :data="menuList"
@@ -78,7 +78,7 @@
           type="primary"
           size="small"
           @click.native="$throttleHandleAdd('form')"
-          >添加</el-button
+          >{{ $t('AddUserPage.添加') }}</el-button
         >
       </div>
     </el-form>
@@ -225,6 +225,14 @@ export default {
       const { result } = response;
       const { url } = result;
       this.userInfos.avatar = url;
+    },
+    loop (list) {
+      list.map((i) => {
+        i.title = this.$t('menuList.' + i.title);
+        if (i.children && i.children.length) {
+          this.loop(i.children);
+        }
+      });
     }
   },
   created () {
@@ -232,6 +240,7 @@ export default {
       const { status, result } = res.data;
       if (status === 0) {
         this.menuList = result;
+        this.loop(this.menuList);
         this.$nextTick(() => {
           this.$refs.tree.setCheckedKeys(this.hasPermission);
         });

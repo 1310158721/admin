@@ -32,29 +32,36 @@ Vue.prototype.$hasPermission = function (checkPermission) {
   return canShow;
 };
 
+const ClipboardHandler = (el, binding) => {
+  el.style.cursor = 'pointer';
+  // 兼容外部元素点击事件，在点击事件后执行（可以通过外部元素设置属性来获取数据）
+  el.onclick = () => {
+    const { value } = binding;
+    if (!value && !el.getAttribute('data-clipboard')) {
+      Message.error('复制内容不能为空');
+      return false;
+    }
+    
+    // 指令有传值则取该值，没有则取指令绑定元素的 clipboard-data 属性值
+    const clipBoardData = value || el.getAttribute('data-clipboard');
+    const inputDom = document.createElement('input');
+    inputDom.value = clipBoardData;
+    document.body.appendChild(inputDom);
+    inputDom.select();
+    document.execCommand('Copy');
+    Message.success('复制成功');
+    inputDom.remove();
+  };
+};
+
 // 复制到粘贴板
 Vue.directive('clipboard', {
-  inserted (el, binding) {
-    el.style.cursor = 'pointer';
-    // 兼容外部元素点击事件，在点击事件后执行（可以通过外部元素设置属性来获取数据）
-    el.onclick = () => {
-      const { value } = binding;
-      if (!value && !el.getAttribute('data-clipboard')) {
-        Message.error('复制内容不能为空');
-        return false;
-      }
-      
-      // 指令有传值则取该值，没有则取指令绑定元素的 clipboard-data 属性值
-      const clipBoardData = value || el.getAttribute('data-clipboard');
-      const inputDom = document.createElement('input');
-      inputDom.value = clipBoardData;
-      document.body.appendChild(inputDom);
-      inputDom.select();
-      document.execCommand('Copy');
-      Message.success('复制成功');
-      inputDom.remove();
-    };
-  }
+  inserted: function (el, binding) {
+    return ClipboardHandler(el, binding);
+  },
+  componentUpdated: function (el, binding) {
+    return ClipboardHandler(el, binding);
+  },
 });
 
 Vue.directive('focus', {

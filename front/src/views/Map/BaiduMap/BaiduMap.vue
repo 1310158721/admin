@@ -25,8 +25,8 @@ export default {
   computed: {
     tabsEnum () {
       return [
-      { label: '周边信息', name: '1', component: 'BaiduMapPeripheral' },
-      { label: '其他类型', name: '2', component: 'BaiduMapOtherType' }
+      { label: this.$t('Map.BaiduMap.周边信息'), name: '1', component: 'BaiduMapPeripheral' },
+      { label: this.$t('Map.BaiduMap.其他类型'), name: '2', component: 'BaiduMapOtherType' }
     ];
     }
   },

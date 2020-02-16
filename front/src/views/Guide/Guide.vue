@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-button type="primary" size="small" @click.prevent.stop="handleClick"
-      >新手引导</el-button
+      >{{$t('Guide.新手引导')}}</el-button
     >
   </div>
 </template>

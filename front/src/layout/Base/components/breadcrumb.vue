@@ -4,7 +4,7 @@
       <transition-group name='breadcrumb'>
         <template>
           <el-breadcrumb-item v-for='(i, index) in breadcrumb' :key='index'>
-            <a @click.prevent='handleLink(i)' :class='{"is-link": i.path}'>{{ i.title }}</a>
+            <a @click.prevent='handleLink(i)' :class='{"is-link": i.path}'>{{ $t('menuList.' + i.title) }}</a>
           </el-breadcrumb-item>
         </template>
       </transition-group>

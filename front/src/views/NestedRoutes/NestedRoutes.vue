@@ -1,10 +1,7 @@
 <template>
   <div class="NestedRoutes-wrapper">
     <p>
-      我是嵌套路由第一层
-    </p>
-    <p>
-      NestedRoutes
+      {{ $t('NestedRoutes.Routes-1') }}
     </p>
     <router-view />
   </div>

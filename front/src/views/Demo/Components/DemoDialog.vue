@@ -15,21 +15,21 @@
       class="form"
       label-position="left"
     >
-      <el-form-item size="small" label="描述：" prop="desc">
+      <el-form-item size="small" :label="$t('Demo.Dialog.描述') + ':'" prop="desc">
         <el-input
           size="small"
           v-model="model.desc"
-          placeholder="请输入demo相关的描述"
+          :placeholder="$t('Demo.Dialog.描述Placeholder')"
         />
       </el-form-item>
-      <el-form-item size="small" label="路径：" prop="path">
+      <el-form-item size="small" :label="$t('Demo.Dialog.路径') + ':'" prop="path">
         <el-input
           size="small"
           v-model="model.path"
-          placeholder="请输入demo相关的路径"
+          :placeholder="$t('Demo.Dialog.路径Placeholder')"
         />
       </el-form-item>
-      <el-form-item size="small" label="内容：" prop="contentText">
+      <el-form-item size="small" :label="$t('Demo.Dialog.内容') + ':'" prop="contentText">
         <Editor
             id="editor"
             ref="editor"
@@ -38,9 +38,9 @@
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button size="small" @click="closeDemoDialog">取 消</el-button>
+      <el-button size="small" @click="closeDemoDialog(false)">{{ $t('Demo.Dialog.取消') }}</el-button>
       <el-button size="small" type="primary" @click="handleSave('form')"
-        >确 定</el-button
+        >{{ $t('Demo.Dialog.确定') }}</el-button
       >
     </span>
   </el-dialog>
@@ -87,7 +87,7 @@ export default {
   },
   computed: {
     dialogTitle () {
-      return this.id ? '新增Demo' : '编辑Demo';
+      return this.id ? this.$t('Demo.Dialog.Edit.Title') : this.$t('Demo.Dialog.Add.Title');
     }
   },
   methods: {
@@ -106,7 +106,11 @@ export default {
       );
     },
     closeDemoDialog (boolean = false) {
-      this.$emit('closeDemoDialog', boolean);
+      if (typeof boolean === 'function' || (typeof boolean === 'boolean' && !boolean)) {
+        this.$emit('closeDemoDialog', false);
+      } else {
+        this.$emit('closeDemoDialog', true);
+      }      
     },
     handleSave (ref) {
       this.$refs[ref].validate(valid => {
@@ -149,9 +153,11 @@ export default {
           content: '',
           contentText: ''
         };
-        this.$refs['form'].resetFields();
-        this.$refs.editor.editor.txt.html(this.model.content);
-        this.model.contentText = this.$refs.editor.editor.txt.text();
+        this.$nextTick(() => {
+          this.$refs['form'].resetFields();
+          this.$refs.editor.editor.txt.html(this.model.content);
+          this.model.contentText = this.$refs.editor.editor.txt.text();
+        });
       }
     },
     editorChange (editor) {

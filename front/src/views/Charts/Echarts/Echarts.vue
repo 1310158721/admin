@@ -26,9 +26,9 @@ export default {
   computed: {
     chartsEnum () {
       return [
-        { label: '折线图', name: '1', component: 'PolygonalLine' },
-        { label: '柱形图', name: '2', component: 'Bar' },
-        { label: '饼形图', name: '3', component: 'Pie' }
+        { label: this.$t('Charts.Echarts.折线图'), name: '1', component: 'PolygonalLine' },
+        { label: this.$t('Charts.Echarts.柱形图'), name: '2', component: 'Bar' },
+        { label: this.$t('Charts.Echarts.饼形图'), name: '3', component: 'Pie' }
       ];
     }
   },

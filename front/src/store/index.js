@@ -11,6 +11,7 @@ export default new Vuex.Store({
     isShowSystemTabView: true,
     isFixedSystemAside: false,
     isShowSystemLogo: false,
+    isOpenMultilingual: true,
     layoutConfigDrawer: false
   },
   mutations: {

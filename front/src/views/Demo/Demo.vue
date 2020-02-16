@@ -7,12 +7,12 @@
         size="small"
         @click.native='handleAddDemo'
         v-permission='"DEMOADD"'
-        >新增Demo</el-button
+        >{{ $t('Demo.新增Demo') }}</el-button
       >
       <span class="self-adaption"></span>
       <SearchBar
         class="search-bar w-240"
-        placeholder="Desc"
+        :placeholder="$t('Demo.placeholder')"
         v-model="params.keyword"
         @sureKeyword="sureKeyword"
       />
@@ -24,40 +24,40 @@
         stripe
         height="100%"
       >
-        <el-table-column label="Order" width="60" align="center">
+        <el-table-column :label="$t('Demo.Order')" width="60" align="center">
           <template slot-scope="scope">
             {{ scope.$index + 1 }}
           </template>
         </el-table-column>
-        <el-table-column label="CreatedTime" width="170" align="center">
+        <el-table-column :label="$t('Demo.Order')" width="170" align="center">
           <template slot-scope="scope">
             {{ scope.row.createdTime | createdTimeFilters }}
           </template>
         </el-table-column>
-        <el-table-column prop="desc" label="Desc" align="center" />
-        <el-table-column prop="path" label="Path" align="center" />
-        <el-table-column label="Operation" width="250" align="center" v-if='$hasPermission("DEMOADD, DEMOEDIT, DEMODELETE")'>
+        <el-table-column prop="desc" :label="$t('Demo.Desc')" align="center" />
+        <el-table-column prop="path" :label="$t('Demo.Path')" align="center" />
+        <el-table-column :label="$t('Demo.Operation')" width="250" align="center" v-if='$hasPermission("DEMOADD, DEMOEDIT, DEMODELETE")'>
           <template slot-scope="scope">
             <el-button
               type="success"
               size="mini"
               @click.native='handleCheckItem(scope.row)'
               v-permission='"DEMOCHECK"'
-              >查看</el-button
+              >{{ $t('Demo.查看') }}</el-button
             >
             <el-button
               type="info"
               size="mini"
               @click.native='handleEditItem(scope.row._id)'
               v-permission='"DEMOEDIT"'
-              >Edit</el-button
+              >{{ $t('Demo.Edit') }}</el-button
             >
             <el-button
               type="danger"
               size="mini"
               @click.native='handleDeleteItem(scope.row._id)'
               v-permission='"DEMODELETE"'
-              >Delete</el-button
+              >{{ $t('Demo.Delete') }}</el-button
             >
           </template>
         </el-table-column>
@@ -107,19 +107,22 @@ export default {
   computed: {},
   methods: {
     GETLIST () {
-      this.isLoading = true;
-      this.params.size = this.size;
-      this.params.page = this.page;
-      this.$axios.get('/getDemoList', { params: this.params })
-        .then((res) => {
-          const { status, result } = res.data;
-          if (status === 0) {
-            const { list, count } = result;
-            this.list = list;
-            this.count = count;
-            this.isLoading = false;
-          }
-        });
+      return new Promise((resolve) => {
+        this.isLoading = true;
+        this.params.size = this.size;
+        this.params.page = this.page;
+        this.$axios.get('/getDemoList', { params: this.params })
+          .then((res) => {
+            const { status, result } = res.data;
+            if (status === 0) {
+              const { list, count } = result;
+              this.list = list;
+              this.count = count;
+              this.isLoading = false;
+              resolve();
+            }
+          });
+      });
     },
     async deleteDemoListItem (params) {
       return await this.$axios.get('/deleteDemoListItem', { params });
@@ -135,22 +138,24 @@ export default {
       }
     },
     handleDeleteItem (_id) {
-      this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
+      this.$confirm(this.$t('Demo.Comfirm.Delete.Content'), this.$t('Demo.Comfirm.Delete.Tip'), {
+          confirmButtonText: this.$t('Demo.Comfirm.Delete.确定'),
+          cancelButtonText: this.$t('Demo.Comfirm.Delete.取消'),
           type: 'warning'
         }).then(() => {
           this.deleteDemoListItem({ _id })
             .then((res) => {
               const { status } = res.data;
               if (status === 0) {
-                this.GETLIST();
+                this.GETLIST().then(() => {
+                  this.$message.success(this.$t('Demo.刷新列表'));
+                });
               }
             });
         }).catch(() => {
           this.$message({
             type: 'info',
-            message: '已取消删除'
+            message: this.$t('Demo.Comfirm.Delete.已取消删除')
           });          
         });
     },

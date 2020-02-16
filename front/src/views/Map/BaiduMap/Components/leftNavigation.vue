@@ -5,7 +5,7 @@
       v-for="i in responseData"
       :key="i.id"
     >
-      <div class="desc-message-list-item-title">{{ i.tag }}</div>
+      <div class="desc-message-list-item-title">{{ $t('Map.BaiduMap.' + i.tag) }}</div>
       <div class="desc-message-list-item-info" v-if="i.list && i.list.length">
         <div
           @click="handleClick(j.point)"
@@ -100,8 +100,9 @@ export default {
       margin-bottom: 0px;
     }
     .desc-message-list-item-title {
-      font-weight: bold;
+      font-weight: bolder;
       font-size: 20px;
+      color: blue;
     }
     .desc-message-list-item-info {
       margin-top: 5px;

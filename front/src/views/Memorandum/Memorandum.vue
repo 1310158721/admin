@@ -7,15 +7,14 @@
         size="small"
         @click.native="handleAddItem"
         v-permission="'MEMORANDUMADD'"
-        >新增事件</el-button
+        >{{$t('Memerandum.新增事件')}}</el-button
       >
       <el-date-picker
         class="w-240 mgr-20"
         v-model="timeRange"
         type="daterange"
-        range-separator="至"
-        start-placeholder="开始日期"
-        end-placeholder="结束日期"
+        :start-placeholder="$t('Memerandum.开始日期')"
+        :end-placeholder="$t('Memerandum.结束日期')"
         size="small"
         @change="timePickerChange"
         :picker-options="pickerOptions"
@@ -27,7 +26,7 @@
         size="small"
         filterable
         clearable
-        placeholder="请选择"
+        :placeholder="$t('Memerandum.请选择')"
         @change="tagChange"
       >
         <el-option
@@ -55,18 +54,18 @@
         height="100%"
         :row-class-name="tableRowClassName"
       >
-        <el-table-column label="Order" width="60" align="center">
+        <el-table-column :label="$t('Memerandum.Order')" width="60" align="center">
           <template slot-scope="scope">
             {{ scope.$index + 1 }}
           </template>
         </el-table-column>
-        <el-table-column label="CreatedTime" width="170" align="center">
+        <el-table-column :label="$t('Memerandum.CreatedTime')" width="170" align="center">
           <template slot-scope="scope">
             {{ scope.row.createdTime | createdTimeFilters }}
           </template>
         </el-table-column>
-        <el-table-column prop="desc" label="Desc" align="center" />
-        <el-table-column label="Tags" width="240" align="center">
+        <el-table-column prop="desc" :label="$t('Memerandum.Desc')" align="center" />
+        <el-table-column :label="$t('Memerandum.Tags')" width="240" align="center">
           <template slot-scope="scope">
             <span v-for="(i, index) in scope.row.tag" :key="i.id">
               <el-tag class="tags" effect="dark" size="small" :type="tagType(index)">{{
@@ -75,33 +74,33 @@
             </span>
           </template>
         </el-table-column>
-        <el-table-column label="Operation" width="320" align="center" v-if='$hasPermission("MEMORANDUMCHECK,MEMORANDUMEDIT,MEMORANDUMDELETE,MEMORANDUMSETFIRST")'>
+        <el-table-column :label="$t('Memerandum.Operation')" width="350" align="center" v-if='$hasPermission("MEMORANDUMCHECK,MEMORANDUMEDIT,MEMORANDUMDELETE,MEMORANDUMSETFIRST")'>
           <template slot-scope="scope">
             <el-button
               type="success"
               size="mini"
               @click.native="hanldeCheck(scope.row.content)"
               v-permission="'MEMORANDUMCHECK'"
-              >查看</el-button
+              >{{ $t('Memerandum.查看') }}</el-button
             >
             <el-button
               type="info"
               size="mini"
               @click.native="hanldeEdit(scope.row._id)"
               v-permission="'MEMORANDUMEDIT'"
-              >Edit</el-button
+              >{{ $t('Memerandum.Edit') }}</el-button
             >
             <el-button
               type="danger"
               size="mini"
               @click.native="hanldeDelete(scope.row._id)"
                v-permission="'MEMORANDUMDELETE'"
-              >Delete</el-button
+              >{{ $t('Memerandum.Delete') }}</el-button
             >
             <el-button v-permission="'MEMORANDUMSETFIRST'" type="warning" v-if="scope.row.isSetFirst" size="mini" @click.native='handleSwitchSetFirst(scope.row)'
-              >取消置顶</el-button
+              >{{ $t('Memerandum.取消置顶') }}</el-button
             >
-            <el-button v-permission="'MEMORANDUMSETFIRST'" type="warning" v-else size="mini" @click.native='handleSwitchSetFirst(scope.row)'>设为置顶</el-button>
+            <el-button v-permission="'MEMORANDUMSETFIRST'" type="warning" v-else size="mini" @click.native='handleSwitchSetFirst(scope.row)'>{{ $t('Memerandum.设为置顶') }}</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -205,28 +204,31 @@ export default {
       return await this.$axios.post('/switchMemorandumListItemIsSetFirst', data);
     },
     GETLIST () {
-      this.isLoading = true;
-      this.params.size = this.size;
-      this.params.page = this.page;
-      this.$axios.all([this.getMemorandumList(), this.getAllTags()]).then(
-        this.$axios.spread((list, tag) => {
-          const listStatus = list.data.status;
-          const listResult = list.data.result;
-          if (listStatus === 0) {
-            const { list, count } = listResult;
-            this.list = list;
-            this.count = count;
-            this.formatListTag(this.list);
-          }
+      return new Promise((resolve) => {
+        this.isLoading = true;
+        this.params.size = this.size;
+        this.params.page = this.page;
+        this.$axios.all([this.getMemorandumList(), this.getAllTags()]).then(
+          this.$axios.spread((list, tag) => {
+            const listStatus = list.data.status;
+            const listResult = list.data.result;
+            if (listStatus === 0) {
+              const { list, count } = listResult;
+              this.list = list;
+              this.count = count;
+              this.formatListTag(this.list);
+            }
 
-          const tagStatus = tag.data.status;
-          const tagResult = tag.data.result;
-          if (tagStatus === 0) {
-            this.tagEnum = tagResult;
-          }
-          this.isLoading = false;
-        })
-      );
+            const tagStatus = tag.data.status;
+            const tagResult = tag.data.result;
+            if (tagStatus === 0) {
+              this.tagEnum = tagResult;
+            }
+            this.isLoading = false;
+            resolve();
+          })
+        );
+      });
     },
     formatListTag (list) {
       list.map(i => {
@@ -253,23 +255,25 @@ export default {
       this.memorandumPreviewDrawer = false;
     },
     hanldeDelete (_id) {
-      this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
+      this.$confirm(this.$t('Memerandum.Comfirm.Delete.Content'), this.$t('Memerandum.Comfirm.Delete.Tip'), {
+        confirmButtonText: this.$t('Memerandum.Comfirm.Delete.确定'),
+        cancelButtonText: this.$t('Memerandum.Comfirm.Delete.取消'),
         type: 'warning'
       })
         .then(() => {
           this.deleteMemorandumListItemById({ _id }).then(res => {
             const { status } = res.data;
             if (status === 0) {
-              this.GETLIST();
+              this.GETLIST().then(() => {
+                  this.$message.success(this.$t('Memerandum.刷新列表'));
+                });
             }
           });
         })
         .catch(() => {
           this.$message({
             type: 'info',
-            message: '已取消删除'
+            message: this.$t('Memerandum.Comfirm.Delete.已取消删除')
           });
         });
     },
@@ -304,22 +308,24 @@ export default {
       return row.isSetFirst ? 'is-set-first' : '';
     },
     handleSwitchSetFirst ({ _id, isSetFirst }) {
-      this.$confirm('此操作将切换该数据的置顶状态, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
+      this.$confirm(this.$t('Memerandum.Comfirm.Top.Content'), this.$t('Memerandum.Comfirm.Top.Tip'), {
+          confirmButtonText: this.$t('Memerandum.Comfirm.Top.确定'),
+          cancelButtonText: this.$t('Memerandum.Comfirm.Top.取消'),
           type: 'warning'
         }).then(() => {
           this.switchMemorandumListItemIsSetFirst({ _id, isSetFirst })
             .then((res) => {
               const { status } = res.data;
               if (status === 0) {
-                this.GETLIST();
+                this.GETLIST().then(() => {
+                  this.$message.success(this.$t('Memerandum.刷新列表'));
+                });
               }
             });
         }).catch(() => {
           this.$message({
             type: 'info',
-            message: '已取消删除'
+            message: this.$t('Memerandum.Comfirm.Top.已取消删除')
           });  
         });
     },

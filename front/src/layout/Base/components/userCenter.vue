@@ -36,28 +36,28 @@ export default {
       return [
         {
           command: 'personalCenter',
-          title: '个人中心',
+          title: this.$t('userCenterDrop.个人中心'),
           disabled: false,
           divided: false,
           cb: this.personalCenter
         },
         {
           command: 'dashboard',
-          title: '首页',
+          title: this.$t('userCenterDrop.首页'),
           disabled: this.$route.path === '/Dashboard',
           divided: false,
           cb: this.dashboard
         },
         {
           command: 'layoutConfig',
-          title: '系统布局',
+          title: this.$t('userCenterDrop.系统布局'),
           disabled: false,
           divided: false,
           cb: this.layoutConfig
         },
         {
           command: 'loginOut',
-          title: '退出登录',
+          title: this.$t('userCenterDrop.退出登录'),
           disabled: false,
           divided: true,
           cb: this.loginOut
@@ -100,7 +100,7 @@ export default {
 
 <style lang="scss" scoped>
 .user-center-wrapper {
-  width: 108px;
+  width: 70px;
   height: 50px;
   position: relative;
   .center-button {

@@ -1,10 +1,10 @@
 <template>
   <div class="NestedRoutes-1-2-1-wrapper">
     <p>
-      我是嵌套路由第四层
+      {{ $t('NestedRoutes.Routes-4') }}
     </p>
     <p>
-      NestedRoutes-1-2-1
+      {{ $t('NestedRoutes.menu-1-2-1') }}
     </p>
   </div>
 </template>

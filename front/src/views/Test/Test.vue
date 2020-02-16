@@ -1,10 +1,6 @@
 <template>
   <div>
-    {{ $t('name') }}
-    <div>
-      <el-button @click='handleSwitch("zh")'>中文</el-button>
-      <el-button @click='handleSwitch("en")'>英文</el-button>
-    </div>
+    Test
   </div>
 </template>
 
@@ -14,7 +10,9 @@ export default {
   components: {},
   props: {},
   data () {
-    return {};
+    return {
+      title: '标题'
+    };
   },
   computed: {},
   methods: {
@@ -25,11 +23,7 @@ export default {
   },
   created () {},
   mounted () {},
-  watch: {
-    '$i18n.locale' (val) {
-      console.log(val);
-    }
-  }
+  watch: {}
 };
 </script>
 

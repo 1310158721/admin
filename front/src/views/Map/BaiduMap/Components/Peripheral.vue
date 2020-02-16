@@ -3,14 +3,14 @@
     <div class="search-wrapper mgb-20">
       <el-input
         class="search-item"
-        placeholder="请输入查询的地名"
+        :placeholder="$t('Map.BaiduMap.InputPlaceholder')"
         size="small"
         v-model="searchWord"
         @keyup.enter.native="handleSearch"
       >
         <template slot="append">
           <el-button size="small" type="primary" @click.native="handleSearch"
-            >search</el-button
+            >{{ $t('Map.BaiduMap.InputSearchButtons') }}</el-button
           >
         </template>
       </el-input>
@@ -22,7 +22,7 @@
         v-for="(i, index) in peripheralButtons"
         :key="index"
         @click="peripheralButtonsClick(i)"
-        >{{ i.keyword }}</span
+        >{{ i.label }}</span
       >
     </div>
     <div class="baidu-map-information-wrapper">
@@ -110,34 +110,42 @@ export default {
     peripheralButtons () {
       return [
         {
+          label: this.$t('Map.BaiduMap.交通'),
           keyword: '交通',
           search: ['地铁站', '公交站']
         },
         {
+          label: this.$t('Map.BaiduMap.商超'),
           keyword: '商超',
           search: ['商场', '超市']
         },
         {
+          label: this.$t('Map.BaiduMap.美食'),
           keyword: '美食',
           search: ['美食']
         },
         {
+          label: this.$t('Map.BaiduMap.咖啡厅'),
           keyword: '咖啡厅',
           search: ['咖啡厅']
         },
         {
+          label: this.$t('Map.BaiduMap.酒吧'),
           keyword: '酒吧',
           search: ['酒吧']
         },
         {
+          label: this.$t('Map.BaiduMap.公园'),
           keyword: '公园',
           search: ['公园']
         },
         {
+          label: this.$t('Map.BaiduMap.景点'),
           keyword: '景点',
           search: ['景点']
         },
         {
+          label: this.$t('Map.BaiduMap.药店'),
           keyword: '药店',
           search: ['药店']
         }
@@ -269,6 +277,7 @@ export default {
         });
         return {
           tag: i.keyword,
+          // tag: this.peripheralButtons.filter((j) => j.search.includes(i.keyword))[0].label,
           list: i.Br
         };
       });

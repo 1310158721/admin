@@ -7,15 +7,14 @@
         size="small"
         v-permission="'PERMISSIONMENUADD'"
         @click="permissionAdd"
-        >新增用户</el-button
+        >{{ $t('PermissionMenu.新增用户') }}</el-button
       >
       <el-date-picker
         class="mgr-20 w-240"
         v-model="timeRange"
         type="daterange"
-        range-separator="至"
-        start-placeholder="开始日期"
-        end-placeholder="结束日期"
+        :start-placeholder="$t('PermissionMenu.开始日期')"
+        :end-placeholder="$t('PermissionMenu.结束日期')"
         size="small"
         @change="timePickerChange"
         :picker-options="pickerOptions"
@@ -27,19 +26,19 @@
         clearable
         v-model="params.role"
         @change="roleChange"
-        placeholder="请选择用户权限级别"
+        :placeholder="$t('PermissionMenu.权限级别')"
       >
         <el-option
           v-for="item in roleEnum"
           :key="item.value"
-          :label="item.label"
+          :label="$t('PermissionMenu.RoleRankEnum.' + item.label)"
           :value="item.value"
         />
       </el-select>
       <span class="self-adaption"></span>
       <SearchBar
         class="search-bar w-240"
-        placeholder="Name/Mobile"
+        :placeholder="$t('PermissionMenu.搜素关键词')"
         v-model="params.keyword"
         @sureKeyword="sureKeyword"
       />
@@ -52,23 +51,24 @@
         stripe
         :row-class-name="tableRowClassName"
       >
-        <el-table-column label="Order" width="80" align="center">
+        <el-table-column :label="$t('PermissionMenu.Order')" width="80" align="center">
           <template slot-scope="scope">
             {{ scope.$index + 1 }}
           </template>
         </el-table-column>
-        <el-table-column label="CreatedTime" align="center">
+        <el-table-column :label="$t('PermissionMenu.CreatedTime')" align="center">
           <template slot-scope="scope">
             {{ scope.row.createdTime | createdTimeFilters }}
           </template>
         </el-table-column>
-        <el-table-column prop="name" label="姓名" align="center" />
-        <el-table-column prop="roleDesc" label="Role" align="center" />
-        <el-table-column prop="mobile" label="Mobile" align="center" />
+        <el-table-column prop="name" :label="$t('PermissionMenu.Name')" align="center" />
+        <el-table-column prop="roleDesc" :label="$t('PermissionMenu.Role')" align="center" />
+        <el-table-column prop="mobile" :label="$t('PermissionMenu.Mobile')" align="center" />
         <el-table-column
-          label="Operation"
+          :label="$t('PermissionMenu.Operation')"
           align="center"
           v-if="$hasPermission('PERMISSIONMENUEDIT,PERMISSIONMENUDELETE')"
+          width='160px'
         >
           <template slot-scope="scope">
             <el-button
@@ -76,7 +76,7 @@
               v-permission="'PERMISSIONMENUEDIT'"
               type="primary"
               @click.native="permissionEdit(scope.row)"
-              >Edit</el-button
+              >{{ $t('PermissionMenu.Edit') }}</el-button
             >
             <el-button
               size="mini"
@@ -84,7 +84,7 @@
               :disabled="scope.row.isSelf"
               type="danger"
               @click.native="permissionDelete(scope.row._id)"
-              >Delete</el-button
+              >{{ $t('PermissionMenu.Delete') }}</el-button
             >
           </template>
         </el-table-column>

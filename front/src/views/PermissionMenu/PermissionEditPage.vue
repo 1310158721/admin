@@ -10,31 +10,30 @@
     >
       <el-row :gutter="20" class="form-content-wrapper">
         <el-col :span="12">
-          <el-form-item size="small" label="账号：">
+          <el-form-item size="small" :label="$t('EditUserPage.账号') + ':'">
             <el-input size="small" disabled v-model="userInfos.account" />
           </el-form-item>
-          <el-form-item size="small" label="密码：">
+          <el-form-item size="small" :label="$t('EditUserPage.密码') + ':'">
             <el-input size="small" disabled v-model="userInfos.password" />
           </el-form-item>
-          <el-form-item size="small" label="名称：">
+          <el-form-item size="small" :label="$t('EditUserPage.名称') + ':'">
             <el-input size="small" disabled v-model="userInfos.name" />
           </el-form-item>
-          <el-form-item size="small" label="号码：">
+          <el-form-item size="small" :label="$t('EditUserPage.号码') + ':'">
             <el-input size="small" disabled v-model="userInfos.mobile" />
           </el-form-item>
-          <el-form-item size="small" label="创建时间：">
+          <el-form-item size="small" :label="$t('EditUserPage.创建时间') + ':'">
             <el-input size="small" disabled v-model="userInfos.createdTime" />
           </el-form-item>
-          <el-form-item size="small" label="头像：">
+          <el-form-item size="small" :label="$t('EditUserPage.头像') + ':'">
             <div class="images" v-viewer.static="{inline: false}">
               <img :src="userInfos.avatar" width="144" height="144" />
             </div>
           </el-form-item>
-          <el-form-item size="small" label="级别：">
+          <el-form-item size="small" :label="$t('EditUserPage.级别') + ':'">
             <el-select
               :disabled="userInfos.role === 'SUPERADMIN'"
               v-model="userInfos.role"
-              placeholder="请选择"
             >
               <el-option
                 v-for="item in roleEnum"
@@ -44,7 +43,7 @@
               />
             </el-select>
           </el-form-item>
-          <el-form-item size="small" label="描述：" prop="desc">
+          <el-form-item size="small" :label="$t('EditUserPage.描述') + ':'" prop="desc">
             <el-input
               disabled
               type="textarea"
@@ -57,7 +56,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item size="small" label="权限菜单：">
+          <el-form-item size="small" :label="$t('EditUserPage.权限菜单') + ':'">
             <el-tree
               v-if="menuList"
               :data="menuList"
@@ -210,6 +209,14 @@ export default {
           }
         }
       });
+    },
+    loop (list) {
+      list.map((i) => {
+        i.title = this.$t('menuList.' + i.title);
+        if (i.children && i.children.length) {
+          this.loop(i.children);
+        }
+      });
     }
   },
   created () {
@@ -224,6 +231,7 @@ export default {
           const menuStatus = menu.data.status;
           if (menuStatus === 0) {
             this.menuList = menu.data.result;
+            this.loop(this.menuList);
           }
 
           const userStatus = user.data.status;

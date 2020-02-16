@@ -1,7 +1,7 @@
 <template>
   <el-dialog
     class="add-waiting-dialog"
-    title="新增待办列表事项"
+    :title="$t('WaitingTodo.Dialog.Title')"
     :visible.sync="addWaitingDialog"
     width="600px"
     :close-on-click-modal='false'
@@ -12,23 +12,23 @@
     @opened='openedAddWaitingDialog'
   >
     <el-form :model="addWaitingModel" :rules="rules" ref="form" label-width="96px" class="add-waiting-list-form" label-position='left'>
-      <el-form-item size='small' label="描述：" prop="desc">
-        <el-input size='small' placeholder='请输入相关描述' ref='textarea' type="textarea" show-word-limit maxlength='100' :autosize="{ minRows: 4, maxRows: 6 }" v-model="addWaitingModel.desc"></el-input>
+      <el-form-item size='small' :label="$t('WaitingTodo.Dialog.描述') + ':'" prop="desc">
+        <el-input size='small' :placeholder='$t("WaitingTodo.Dialog.描述占位符")' ref='textarea' type="textarea" show-word-limit maxlength='100' :autosize="{ minRows: 4, maxRows: 6 }" v-model="addWaitingModel.desc"></el-input>
       </el-form-item>
-      <el-form-item size='small' label="等级：">
-        <el-select v-model="addWaitingModel.rank" placeholder="请选择">
+      <el-form-item size='small' :label="$t('WaitingTodo.Dialog.等级') + ':'">
+        <el-select v-model="addWaitingModel.rank">
           <el-option
             v-for="item in waitingListRank"
             :key="item.value"
-            :label="item.label"
+            :label="$t('WaitingTodo.等级枚举.' + item.label)"
             :value="item.value">
           </el-option>
         </el-select>
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button size='small' @click="closeAddWaitingDialog">取 消</el-button>
-      <el-button size='small' type="primary" @click="$throttleHandleSave('form')">确 定</el-button>
+      <el-button size='small' @click="closeAddWaitingDialog(false)">{{ $t('WaitingTodo.Dialog.取消') }}</el-button>
+      <el-button size='small' type="primary" @click="$throttleHandleSave('form')">{{ $t('WaitingTodo.Dialog.确定') }}</el-button>
     </span>
   </el-dialog>
 </template>
@@ -53,7 +53,7 @@ export default {
       },
       rules: {
         desc: [
-          { required: true, message: '相关描述不能为空' }
+          { required: true, message: this.$t('WaitingTodo.Dialog.描述提示') }
         ]
       }
     };
@@ -64,14 +64,26 @@ export default {
     },
     $throttleHandleSave () {
       return $throttle((ref) => this.handleSave(ref), 2000);
-    }
+    },
+    // 放在data上，不会更新 desc 的 message
+    // rules () {
+    //   return {
+    //     desc: [
+    //       { required: true, message: this.$t('WaitingTodo.Dialog.描述提示') }
+    //     ]
+    //   };
+    // }
   },
   methods: {
     async addWaitingListItem () {
       return await this.$axios.post('/addWaitingListItem', this.addWaitingModel);
     },
     closeAddWaitingDialog (isSave = false) {
-      this.$emit('closeAddWaitingDialog', isSave);
+      if (typeof isSave === 'function' || (typeof isSave === 'boolean' && !isSave)){
+        this.$emit('closeAddWaitingDialog', false);
+      } else {
+        this.$emit('closeAddWaitingDialog', true);
+      }
       this.resetAddWaitingModel();
     },
     handleSave (ref) {
@@ -103,7 +115,12 @@ export default {
   },
   created () {},
   mounted () {},
-  watch: {}
+  watch: {
+    // 监听改变rules里面的数据
+    '$i18n.locale' () {
+      this.rules.desc[0].message = this.$t('WaitingTodo.Dialog.描述提示');
+    }
+  }
 };
 </script>
 

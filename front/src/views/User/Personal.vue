@@ -11,22 +11,22 @@
     >
       <el-row :gutter="20" class="form-content-wrapper">
         <el-col :span="12">
-          <el-form-item size="small" label="账号：" prop='account'>
+          <el-form-item size="small" :label="$t('EditUserPage.账号') + ':'" prop='account'>
             <el-input size="small" v-model="userInfos.account" />
           </el-form-item>
-          <el-form-item size="small" label="密码：" prop='password'>
+          <el-form-item size="small" :label="$t('EditUserPage.密码') + ':'" prop='password'>
             <el-input size="small" v-model="userInfos.password" />
           </el-form-item>
-          <el-form-item size="small" label="名称：" prop='name'>
+          <el-form-item size="small" :label="$t('EditUserPage.名称') + ':'" prop='name'>
             <el-input size="small" v-model="userInfos.name" />
           </el-form-item>
-          <el-form-item size="small" label="号码：" prop='mobile'>
+          <el-form-item size="small" :label="$t('EditUserPage.号码') + ':'" prop='mobile'>
             <el-input size="small" maxlength='11' v-model="userInfos.mobile" />
           </el-form-item>
-          <el-form-item size="small" label="创建时间：">
+          <el-form-item size="small" :label="$t('EditUserPage.创建时间') + ':'">
             <el-input size="small" disabled v-model="userInfos.createdTime" />
           </el-form-item>
-          <el-form-item size="small" label="头像：" prop='avatar'>
+          <el-form-item size="small" :label="$t('EditUserPage.头像') + ':'" prop='avatar'>
             <div
               class="avatar-wrapper"
             >
@@ -41,7 +41,7 @@
               />
             </div>
           </el-form-item>
-          <el-form-item size="small" label="级别：">
+          <el-form-item size="small" :label="$t('EditUserPage.级别') + ':'">
             <el-select
               :disabled="userInfos.role === 'SUPERADMIN'"
               v-model="userInfos.role"
@@ -55,7 +55,7 @@
               />
             </el-select>
           </el-form-item>
-          <el-form-item size="small" label="描述：" prop="desc">
+          <el-form-item size="small" :label="$t('EditUserPage.描述') + ':'" prop="desc">
             <el-input
               type="textarea"
               :autosize="{ minRows: 3, maxRows: 6 }"
@@ -67,7 +67,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item size="small" label="权限菜单：">
+          <el-form-item size="small" :label="$t('EditUserPage.权限菜单') + ':'">
             <el-tree
               disable
               v-if="menuList"
@@ -89,7 +89,7 @@
           type="primary"
           size="small"
           @click.native="$throttleHandleSave('form')"
-          >保 存</el-button
+          >{{ $t('EditUserPage.保存') }}</el-button
         >
       </div>
     </el-form>
@@ -246,6 +246,14 @@ export default {
             return false;
           }
         });
+    },
+    loop (list) {
+      list.map((i) => {
+        i.title = this.$t('menuList.' + i.title);
+        if (i.children && i.children.length) {
+          this.loop(i.children);
+        }
+      });
     }
   },
   created () {
@@ -256,6 +264,7 @@ export default {
         if (menuStatus === 0) {
           this.disabledMenuList(menu.data.result);
           this.menuList = menu.data.result;
+          this.loop(this.menuList);
         }
 
         const userStatus = user.data.status;

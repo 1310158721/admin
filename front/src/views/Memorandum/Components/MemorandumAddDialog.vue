@@ -20,14 +20,22 @@
         class="form"
         label-position="left"
       >
-        <el-form-item size="small" label="事件描述:" prop="desc">
+        <el-form-item
+          size="small"
+          :label="$t('Memerandum.Dialog.事件描述') + ':'"
+          prop="desc"
+        >
           <el-input
             size="small"
             v-model="model.desc"
             placeholder="事件描述"
           ></el-input>
         </el-form-item>
-        <el-form-item size="small" label="事件Tags:" prop="tag">
+        <el-form-item
+          size="small"
+          :label="$t('Memerandum.Dialog.事件Tags') + ':'"
+          prop="tag"
+        >
           <el-tag
             :key="tag"
             v-for="(tag, index) in model.tag"
@@ -54,30 +62,40 @@
             size="small"
             @click="showInput"
             >{{
-              model.tag.length >= 3 ? '最大个数不能超过3' : '+ New Tag'
+              model.tag.length >= 3 ? this.$t('Memerandum.Dialog.最大标签数') : this.$t('Memerandum.Dialog.新增标签')
             }}</el-button
           >
         </el-form-item>
-        <el-form-item size="small" label="事件内容" prop="contentText">
+        <el-form-item
+          size="small"
+          :label="$t('Memerandum.Dialog.事件内容') + ':'"
+          prop="contentText"
+        >
           <Editor
             id="editor"
             :params="{
               directory: 'record'
             }"
-            :menus='menus'
+            :menus="menus"
             ref="editor"
             @editorChange="editorChange"
           />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button size="small" type="info" @click.native="handlePreview" v-if='model.contentText'
-          >预 览</el-button
+        <el-button
+          size="small"
+          type="info"
+          @click.native="handlePreview"
+          v-if="model.contentText"
+          >{{ $t('Memerandum.Dialog.预览') }}</el-button
         >
-        <el-button size="small" @click="closeDialog">取 消</el-button>
-        <el-button size="small" type="primary" @click="handleSave('form')"
-          >确 定</el-button
-        >
+        <el-button size="small" @click="closeDialog(false)">{{
+          $t('Memerandum.Dialog.取消')
+        }}</el-button>
+        <el-button size="small" type="primary" @click="handleSave('form')">{{
+          $t('Memerandum.Dialog.确定')
+        }}</el-button>
       </span>
     </el-dialog>
     <MemorandumPreviewDrawer
@@ -130,7 +148,9 @@ export default {
   },
   computed: {
     dialogTitle () {
-      return this.id ? '编辑备忘录事件' : '新增备忘录事件';
+      return this.id
+        ? this.$t('Memerandum.Dialog.Edit.Title')
+        : this.$t('Memerandum.Dialog.Add.Title');
     }
   },
   methods: {
@@ -163,8 +183,15 @@ export default {
       }
     },
     closeDialog (boolean = false) {
+      if (
+        typeof boolean === 'function' ||
+        (typeof boolean === 'boolean' && !boolean)
+      ) {
+        this.$emit('closeDialog', false);
+      } else {
+        this.$emit('closeDialog', true);
+      }
       this.resetModel();
-      this.$emit('closeDialog', boolean);
     },
     handleClose (tag) {
       this.model.tag.splice(this.model.tag.indexOf(tag), 1);
@@ -207,16 +234,16 @@ export default {
       return Object.assign({}, { desc, tag: tag.join(','), content });
     },
     resetModel () {
-      this.model = {
-        desc: '',
-        tag: [],
-        content: '',
-        contentText: ''
-      };
       this.$nextTick(() => {
+        this.model = {
+          desc: '',
+          tag: [],
+          content: '',
+          contentText: ''
+        };
         this.$refs['form'].resetFields();
-      this.$refs.editor.editor.txt.html(this.model.content);
-      this.model.contentText = this.$refs.editor.editor.txt.text();
+        this.$refs.editor.editor.txt.html(this.model.content);
+        this.model.contentText = this.$refs.editor.editor.txt.text();
       });
     },
     handleSave (ref) {
@@ -253,7 +280,8 @@ export default {
           return '';
         case 2:
           return 'danger';
-        default: '';
+        default:
+          '';
       }
     }
   },

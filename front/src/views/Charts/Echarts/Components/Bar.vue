@@ -9,11 +9,15 @@ export default {
   components: {},
   props: {},
   data () {
-    return {
-      option: {
+    return {};
+  },
+  computed: {
+    // 放在computed上，当切换多语言时能更新图表的语言，在watch监听切换语言时重新渲染图表
+    option () {
+      return {
         xAxis: {
           type: 'category',
-          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+          data: [this.$t('Charts.Echarts.Week.Mon'), this.$t('Charts.Echarts.Week.Tue'), this.$t('Charts.Echarts.Week.Wed'), this.$t('Charts.Echarts.Week.Thu'), this.$t('Charts.Echarts.Week.Fri'), this.$t('Charts.Echarts.Week.Sat'), this.$t('Charts.Echarts.Week.Sun')]
         },
         yAxis: {
           type: 'value'
@@ -24,10 +28,9 @@ export default {
             type: 'bar'
           }
         ]
-      }
-    };
+      };
+    }
   },
-  computed: {},
   methods: {},
   created () {},
   mounted () {
@@ -38,7 +41,12 @@ export default {
       myChart.resize();
     };
   },
-  watch: {}
+  watch: {
+    '$i18n.locale' () {
+      const myChart = echarts.init(document.getElementById('bar'));
+      myChart.setOption(this.option);
+    }
+  }
 };
 </script>
 

@@ -9,8 +9,12 @@ export default {
   components: {},
   props: {},
   data () {
-    return {
-      option: {
+    return {};
+  },
+  computed: {
+    // 放在computed上，当切换多语言时能更新图表的语言，在watch监听切换语言时重新渲染图表
+    option () {
+      return {
         tooltip: {
           trigger: 'item',
           formatter: '{a} <br/>{b}: {c} ({d}%)'
@@ -18,11 +22,11 @@ export default {
         legend: {
           orient: 'vertical',
           left: 10,
-          data: ['直接访问', '邮件营销', '联盟广告', '视频广告', '搜索引擎']
+          data: [this.$t('Charts.Echarts.Pie.直接访问'), this.$t('Charts.Echarts.Pie.邮件营销'), this.$t('Charts.Echarts.Pie.联盟广告'), this.$t('Charts.Echarts.Pie.视频广告'), this.$t('Charts.Echarts.Pie.搜索引擎')]
         },
         series: [
           {
-            name: '访问来源',
+            name: this.$t('Charts.Echarts.Pie.访问来源'),
             type: 'pie',
             radius: ['50%', '70%'],
             avoidLabelOverlap: false,
@@ -45,18 +49,17 @@ export default {
               }
             },
             data: [
-              { value: 335, name: '直接访问' },
-              { value: 310, name: '邮件营销' },
-              { value: 234, name: '联盟广告' },
-              { value: 135, name: '视频广告' },
-              { value: 1548, name: '搜索引擎' }
+              { value: 335, name: this.$t('Charts.Echarts.Pie.直接访问') },
+              { value: 310, name: this.$t('Charts.Echarts.Pie.邮件营销') },
+              { value: 234, name: this.$t('Charts.Echarts.Pie.联盟广告') },
+              { value: 135, name: this.$t('Charts.Echarts.Pie.视频广告') },
+              { value: 1548, name: this.$t('Charts.Echarts.Pie.搜索引擎') }
             ]
           }
         ]
-      }
-    };
+      };
+    }
   },
-  computed: {},
   methods: {},
   created () {},
   mounted () {
@@ -67,7 +70,12 @@ export default {
       myChart.resize();
     };
   },
-  watch: {}
+  watch: {
+    '$i18n.locale' () {
+      const myChart = echarts.init(document.getElementById('Pie'));
+      myChart.setOption(this.option);
+    }
+  }
 };
 </script>
 

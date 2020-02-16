@@ -1,7 +1,7 @@
 <template>
   <el-container class="not-menu-wrapper">
     <el-header>
-      <el-page-header @back="goBack" :content="$route.meta.title"></el-page-header>
+      <el-page-header :title='$t("Router.NotMenuRoutes.返回")' @back="goBack" :content="$t('Router.NotMenuRoutes.' + $route.meta.title)"></el-page-header>
     </el-header>
     <el-main>
       <router-view />

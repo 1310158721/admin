@@ -2,19 +2,19 @@
   <el-table :data="list" stripe border height="100%">
     <el-table-column
       prop="type"
-      label="Type"
+      :label="$t('Files.LoadDown.Type')"
       width="100"
       align="center"
-    ></el-table-column>
-    <el-table-column prop="desc" label="Desc" align="center"></el-table-column>
-    <el-table-column prop="url" label="Url" align="center"></el-table-column>
-    <el-table-column label="Operation" align="center" width="100px">
+    />
+    <el-table-column prop="desc" :label="$t('Files.LoadDown.Desc')" align="center"></el-table-column>
+    <el-table-column prop="url" :label="$t('Files.LoadDown.Url')" align="center"></el-table-column>
+    <el-table-column :label="$t('Files.LoadDown.Operation')" align="center" width="120px">
       <template slot-scope="scope">
         <el-button
           size="mini"
           type="primary"
           @click.native="handleLoad(scope.row)"
-          >下载</el-button
+          >{{ $t('Files.LoadDown.下载') }}</el-button
         >
       </template>
     </el-table-column>

@@ -20,7 +20,12 @@ import '@/http/interceptors';
 import '@/components/global';
 import 'viewerjs/dist/viewer.css';
 
-Vue.use(ElementUI);
+// element-ui 兼容 i18n 插件
+Vue.use(ElementUI, {
+  i18n: (key, value) => i18n.t(key, value)
+});
+
+// 全局使用 viewer 图片查看器插件
 Vue.use(Viewer, {
   defaultOptions: {
     zIndex: 9999
@@ -31,6 +36,7 @@ Vue.use(BaiduMap, {
   ak: 'jEVOBuDco4uCCkoDytYgVLMuTzAPHWUI'
 });
 
+// 全局拓展 $axios 方法
 Vue.prototype.$axios = axios;
 
 Vue.config.productionTip = false;

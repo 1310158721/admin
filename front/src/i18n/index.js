@@ -3,6 +3,10 @@ import VueI18n from 'vue-i18n';
 import zh from './config/zh';
 import en from './config/en';
 
+// element-ui组件国际化
+import elementEnLocale from 'element-ui/lib/locale/lang/en'; // element-ui lang
+import elementZhLocale from 'element-ui/lib/locale/lang/zh-CN';
+
 Vue.use(VueI18n);
 
 const i18n = new VueI18n({
@@ -10,8 +14,14 @@ const i18n = new VueI18n({
   locale: localStorage.getItem('locale') || 'zh',
   // 添加多语言
   messages: {
-    zh,
-    en
+    zh: {
+      ...zh,
+      ...elementZhLocale
+    },
+    en: {
+      ...en,
+      ...elementEnLocale
+    }
   }
 });
 

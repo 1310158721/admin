@@ -1,7 +1,7 @@
 <template>
   <div class="my-tab-routes" v-if='tabRoutes.length'>
     <el-tabs v-model="activeName" @tab-click="handleClick" @tab-remove="removeTab">
-      <el-tab-pane v-for="(i) in tabRoutes" :key='i.path' :label="i.title" :name="i.path" :closable='i.path !== "/Dashboard"' />
+      <el-tab-pane v-for="(i) in tabRoutes" :key='i.path' :label="$t('menuList.' + i.title)" :name="i.path" :closable='i.path !== "/Dashboard"' />
     </el-tabs>
   </div>
 </template>
