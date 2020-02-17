@@ -20,31 +20,55 @@ export default {
         {
           element: '#guide-collapse',
           popover: {
-            title: '导航栏状态切换按钮',
-            description: '可以控制导航栏的显示 && 隐藏'
+            title: this.$t('Guide.Collapse.Title'),
+            description: this.$t('Guide.Collapse.Desc')
           }
         },
         {
           element: '#guide-breadcrum',
           popover: {
-            title: '系统面包屑',
-            description: '显示当前路由的所在层级',
+            title: this.$t('Guide.Breadcrum.Title'),
+            description: this.$t('Guide.Breadcrum.Desc'),
             position: 'bottom'
+          }
+        },
+        {
+          element: '#full-screen',
+          popover: {
+            title: this.$t('Guide.Screen.Title'),
+            description: this.$t('Guide.Screen.Desc'),
+            position: 'left'
+          }
+        },
+        {
+          element: '#routes-search',
+          popover: {
+            title: this.$t('Guide.Search.Title'),
+            description: this.$t('Guide.Search.Desc'),
+            position: 'left'
+          }
+        },
+        {
+          element: '#multilingual',
+          popover: {
+            title: this.$t('Guide.Multilingual.Title'),
+            description: this.$t('Guide.Multilingual.Desc'),
+            position: 'left'
           }
         },
         {
           element: '#guide-user-center',
           popover: {
-            title: '用户中心',
-            description: '查看用户信息 && 系统设置',
+            title: this.$t('Guide.User.Title'),
+            description: this.$t('Guide.User.Desc'),
             position: 'left'
           }
         },
         {
           element: '#guide-tabs',
           popover: {
-            title: 'tabs菜单栏',
-            description: '可以在这里跳转页面',
+            title: this.$t('Guide.Tab.Title'),
+            description: this.$t('Guide.Tab.Desc'),
             position: 'bottom'
           }
         }

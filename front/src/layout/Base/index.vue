@@ -42,8 +42,21 @@ export default {
 <style lang="scss" scoped>
 #app-container {
   width: 100vw;
+  min-width: 1200px;
   height: 100vh;
   overflow: hidden;
+  &:-webkit-full-screen {  
+    background-color: #ffffff !important;  
+  }
+  &:-moz-full-screen {  
+    background-color: #ffffff  !important;  
+  }
+  :-ms-fullscreen {  
+    background-color: #ffffff  !important;  
+  }  
+  &:fullscreen {
+    background-color: #ffffff  !important;  
+  }
   #app-right-aside {
     height: 100%;
     overflow-y: auto;

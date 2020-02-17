@@ -17,8 +17,10 @@ const en = {
     '图表': 'Charts',
     'Echarts': 'Echarts',
     '文件': 'Files',
-    '下载文件': 'LoadDown File',
-    '嵌套路由': 'Nested Routes',
+    '下载文件': 'Download File',
+    '下载': 'Download',
+    '预览': 'Preview',
+    '嵌套路由': 'NestedRoutes',
     '路由-1': 'Route-1',
     '路由-1-1': 'Route-1-1',
     '路由-1-2': 'Route-1-2',
@@ -33,7 +35,7 @@ const en = {
     'VueDraggable': 'VueDraggable',
     '地图': 'Map',
     '百度地图': 'BaiduMap',
-    '权限管理': 'Permission Manage',
+    '权限管理': 'Permission',
     '权限菜单': 'Permission Menu',
     '新增用户': 'Add User',
     '方便测试': 'Testing'
@@ -76,7 +78,35 @@ const en = {
     }
   },
   Guide: {
-    '新手引导': 'Novice Guide'
+    '新手引导': 'Novice Guide',
+    Collapse: {
+      Title: 'Navigation bar status toggle button',
+      Desc: 'Can control the display of navigation bar && hide'
+    },
+    Breadcrum: {
+      Title: 'System crumbs',
+      Desc: 'Displays the level of the current route'
+    },
+    Screen: {
+      Title: 'Full screen',
+      Desc: 'Enlarge the current interface to the entire browser'
+    },
+    Search: {
+      Title: 'Routing search',
+      Desc: 'You can use keywords to search all current routes and jump'
+    },
+    Multilingual: {
+      Title: 'Multilingual Settings',
+      Desc: 'You can switch the language of the system here'
+    },
+    User: {
+      Title: 'User center',
+      Desc: 'View user information && system settings'
+    },
+    Tab: {
+      Title: 'Tabs menu bar',
+      Desc: 'You can jump to the page here'
+    }
   },
   Memerandum: {
     '新增事件': 'New Memerandum',
@@ -213,12 +243,19 @@ const en = {
     }
   },
   Files: {
-    LoadDown: {
+    Download: {
       'Type': 'Type',
       'Desc': 'Desc',
       'Url': 'Url',
       'Operation': 'Operation',
-      '下载': 'LoadDwon'
+      '下载': 'Dwonload',
+      '预览': 'Preview',
+      '不支持': 'Online preview of non PDF files in blob format is not supported temporarily',
+      Dialog: {
+        '文件查看器': 'DAMN NFO Viewer',
+        '取消': 'Cancel',
+        '确定': 'Sure'
+      }
     }
   },
   NestedRoutes: {

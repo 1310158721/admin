@@ -1,5 +1,10 @@
 <template>
-  <el-dropdown trigger="click" class="multilingual-wrapper" @command="handleCommand">
+  <el-dropdown
+    id="multilingual"
+    trigger="click"
+    class="multilingual-wrapper"
+    @command="handleCommand"
+  >
     <span class="el-dropdown-link">
       <i class="iconfont icon-language multilingual"></i>
     </span>
@@ -51,7 +56,7 @@ export default {
         case 'en':
           this.$message.success('Switch Language Success');
           return;
-        default: 
+        default:
           return;
       }
     }
@@ -78,6 +83,9 @@ export default {
     outline: none;
     cursor: pointer;
     overflow: hidden;
+    &:hover {
+      color: #409eff;
+    }
   }
 }
 </style>

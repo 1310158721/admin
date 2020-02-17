@@ -7,7 +7,7 @@
         size="small"
         v-permission="'PERMISSIONMENUADD'"
         @click="permissionAdd"
-        >{{ $t('PermissionMenu.新增用户') }}</el-button
+        >{{ $t('menuList.新增用户') }}</el-button
       >
       <el-date-picker
         class="mgr-20 w-240"
@@ -76,7 +76,7 @@
               v-permission="'PERMISSIONMENUEDIT'"
               type="primary"
               @click.native="permissionEdit(scope.row)"
-              >{{ $t('PermissionMenu.Edit') }}</el-button
+              >{{ $t('menuList.Edit') }}</el-button
             >
             <el-button
               size="mini"
@@ -84,7 +84,7 @@
               :disabled="scope.row.isSelf"
               type="danger"
               @click.native="permissionDelete(scope.row._id)"
-              >{{ $t('PermissionMenu.Delete') }}</el-button
+              >{{ $t('menuList.Delete') }}</el-button
             >
           </template>
         </el-table-column>

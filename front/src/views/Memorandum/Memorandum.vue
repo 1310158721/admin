@@ -7,7 +7,7 @@
         size="small"
         @click.native="handleAddItem"
         v-permission="'MEMORANDUMADD'"
-        >{{$t('Memerandum.新增事件')}}</el-button
+        >{{$t('menuList.新增事件')}}</el-button
       >
       <el-date-picker
         class="w-240 mgr-20"
@@ -81,21 +81,21 @@
               size="mini"
               @click.native="hanldeCheck(scope.row.content)"
               v-permission="'MEMORANDUMCHECK'"
-              >{{ $t('Memerandum.查看') }}</el-button
+              >{{ $t('menuList.查看') }}</el-button
             >
             <el-button
               type="info"
               size="mini"
               @click.native="hanldeEdit(scope.row._id)"
               v-permission="'MEMORANDUMEDIT'"
-              >{{ $t('Memerandum.Edit') }}</el-button
+              >{{ $t('menuList.Edit') }}</el-button
             >
             <el-button
               type="danger"
               size="mini"
               @click.native="hanldeDelete(scope.row._id)"
                v-permission="'MEMORANDUMDELETE'"
-              >{{ $t('Memerandum.Delete') }}</el-button
+              >{{ $t('menuList.Delete') }}</el-button
             >
             <el-button v-permission="'MEMORANDUMSETFIRST'" type="warning" v-if="scope.row.isSetFirst" size="mini" @click.native='handleSwitchSetFirst(scope.row)'
               >{{ $t('Memerandum.取消置顶') }}</el-button

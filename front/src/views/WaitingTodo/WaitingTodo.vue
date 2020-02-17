@@ -1,7 +1,7 @@
 <template>
   <div class="waiting-to-to-wrapper list-wrapper">
     <div class="conditions-wrapper mgb-20">
-      <el-button class="mgr-20" type='primary' size='small' v-permission='"WAITINGTODOADD"' @click.native='handleAddItem'>{{ $t('WaitingTodo.新增事项') }}</el-button>
+      <el-button class="mgr-20" type='primary' size='small' v-permission='"WAITINGTODOADD"' @click.native='handleAddItem'>{{ $t('menuList.新增事项') }}</el-button>
       <el-date-picker
         class="mgr-20 w-240"
         v-model="timeRange"
@@ -67,7 +67,7 @@
             <el-button size='mini' type='info' v-else @click.native='handleSwitchStatus(scope.row)' v-permission='"WAITINGTODOFINISH"'>{{ $t('WaitingTodo.切至已完') }}</el-button>
             <el-button size='mini' type='success' v-if='scope.row.isSetFirst' @click.native='handleSwitchIsFirst(scope.row)' v-permission='"WAITINGTODOSETFIRST"'>{{ $t('WaitingTodo.取消置顶') }}</el-button>
             <el-button size='mini' type='danger' v-else @click.native='handleSwitchIsFirst(scope.row)' v-permission='"WAITINGTODOSETFIRST"'>{{ $t('WaitingTodo.设为置顶') }}</el-button>
-            <el-button size='mini' type='danger' @click.native='handleDelete(scope.row._id)' v-permission='"WAITINGTODODELETE"'>{{ $t('WaitingTodo.Delete') }}</el-button>
+            <el-button size='mini' type='danger' @click.native='handleDelete(scope.row._id)' v-permission='"WAITINGTODODELETE"'>{{ $t('menuList.Delete') }}</el-button>
           </template>
         </el-table-column>
       </el-table>

@@ -4,6 +4,8 @@
     <i id='guide-collapse' v-else class="iconfont icon-tudingguding collapse-icon"></i>
     <MyBreadcrumb id='guide-breadcrum' />
     <div style="flex: 1;"></div>
+    <FullScreen />
+    <RouteSearch />
     <Multilingual v-if='$store.state.isOpenMultilingual' />
     <UserCenter id='guide-user-center' />
   </div>
@@ -14,12 +16,16 @@ import EventBus from '@/assets/js/eventBus';
 import MyBreadcrumb from './components/breadcrumb';
 import UserCenter from './components/userCenter';
 import Multilingual from './components/multilingual';
+import RouteSearch from './components/routeSearch';
+import FullScreen from './components/fullScreen';
 export default {
   name: 'MyHeader',
   components: {
     MyBreadcrumb,
     Multilingual,
-    UserCenter
+    UserCenter,
+    RouteSearch,
+    FullScreen
   },
   props: {},
   data () {

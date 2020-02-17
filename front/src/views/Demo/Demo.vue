@@ -7,7 +7,7 @@
         size="small"
         @click.native='handleAddDemo'
         v-permission='"DEMOADD"'
-        >{{ $t('Demo.新增Demo') }}</el-button
+        >{{ $t('menuList.新增Demo') }}</el-button
       >
       <span class="self-adaption"></span>
       <SearchBar
@@ -43,21 +43,21 @@
               size="mini"
               @click.native='handleCheckItem(scope.row)'
               v-permission='"DEMOCHECK"'
-              >{{ $t('Demo.查看') }}</el-button
+              >{{ $t('menuList.查看') }}</el-button
             >
             <el-button
               type="info"
               size="mini"
               @click.native='handleEditItem(scope.row._id)'
               v-permission='"DEMOEDIT"'
-              >{{ $t('Demo.Edit') }}</el-button
+              >{{ $t('menuList.Edit') }}</el-button
             >
             <el-button
               type="danger"
               size="mini"
               @click.native='handleDeleteItem(scope.row._id)'
               v-permission='"DEMODELETE"'
-              >{{ $t('Demo.Delete') }}</el-button
+              >{{ $t('menuList.Delete') }}</el-button
             >
           </template>
         </el-table-column>
