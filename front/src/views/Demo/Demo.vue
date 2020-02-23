@@ -5,8 +5,8 @@
         class="mgr-20"
         type="primary"
         size="small"
-        @click.native='handleAddDemo'
-        v-permission='"DEMOADD"'
+        @click.native="handleAddDemo"
+        v-permission="'DEMOADD'"
         >{{ $t('menuList.新增Demo') }}</el-button
       >
       <span class="self-adaption"></span>
@@ -17,13 +17,8 @@
         @sureKeyword="sureKeyword"
       />
     </div>
-    <div class="table-wrapper" v-loading='isLoading'>
-      <el-table
-        :data="list"
-        border
-        stripe
-        height="100%"
-      >
+    <div class="table-wrapper" v-loading="isLoading">
+      <el-table :data="list" border stripe height="100%">
         <el-table-column :label="$t('Demo.Order')" width="60" align="center">
           <template slot-scope="scope">
             {{ scope.$index + 1 }}
@@ -36,27 +31,32 @@
         </el-table-column>
         <el-table-column prop="desc" :label="$t('Demo.Desc')" align="center" />
         <el-table-column prop="path" :label="$t('Demo.Path')" align="center" />
-        <el-table-column :label="$t('Demo.Operation')" width="250" align="center" v-if='$hasPermission("DEMOADD, DEMOEDIT, DEMODELETE")'>
+        <el-table-column
+          :label="$t('Demo.Operation')"
+          width="250"
+          align="center"
+          v-if="$hasPermission('DEMOADD, DEMOEDIT, DEMODELETE')"
+        >
           <template slot-scope="scope">
             <el-button
               type="success"
               size="mini"
-              @click.native='handleCheckItem(scope.row)'
-              v-permission='"DEMOCHECK"'
+              @click.native="handleCheckItem(scope.row)"
+              v-permission="'DEMOCHECK'"
               >{{ $t('menuList.查看') }}</el-button
             >
             <el-button
               type="info"
               size="mini"
-              @click.native='handleEditItem(scope.row._id)'
-              v-permission='"DEMOEDIT"'
+              @click.native="handleEditItem(scope.row._id)"
+              v-permission="'DEMOEDIT'"
               >{{ $t('menuList.Edit') }}</el-button
             >
             <el-button
               type="danger"
               size="mini"
-              @click.native='handleDeleteItem(scope.row._id)'
-              v-permission='"DEMODELETE"'
+              @click.native="handleDeleteItem(scope.row._id)"
+              v-permission="'DEMODELETE'"
               >{{ $t('menuList.Delete') }}</el-button
             >
           </template>
@@ -77,9 +77,9 @@
       </el-pagination>
     </div>
     <demoDialog
-      :id='id'
-      :demoDialog='demoDialog'
-      @closeDemoDialog='closeDemoDialog'
+      :id="id"
+      :demoDialog="demoDialog"
+      @closeDemoDialog="closeDemoDialog"
     />
   </div>
 </template>
@@ -101,27 +101,28 @@ export default {
       demoDialog: false,
       id: '',
       isLoading: false,
-      params: {}
+      params: {
+        keyword: null
+      }
     };
   },
   computed: {},
   methods: {
     GETLIST () {
-      return new Promise((resolve) => {
+      return new Promise(resolve => {
         this.isLoading = true;
         this.params.size = this.size;
         this.params.page = this.page;
-        this.$axios.get('/getDemoList', { params: this.params })
-          .then((res) => {
-            const { status, result } = res.data;
-            if (status === 0) {
-              const { list, count } = result;
-              this.list = list;
-              this.count = count;
-              this.isLoading = false;
-              resolve();
-            }
-          });
+        this.$axios.get('/getDemoList', { params: this.params }).then(res => {
+          const { status, result } = res.data;
+          if (status === 0) {
+            const { list, count } = result;
+            this.list = list;
+            this.count = count;
+            this.isLoading = false;
+            resolve();
+          }
+        });
       });
     },
     async deleteDemoListItem (params) {
@@ -134,29 +135,37 @@ export default {
     closeDemoDialog (boolean) {
       this.demoDialog = false;
       if (boolean) {
-        this.GETLIST();
+        this.params.keyword = null;
+        this.GETLIST().then(() => {
+          this.$message.success(this.$t('Demo.刷新列表'));
+        });
       }
     },
     handleDeleteItem (_id) {
-      this.$confirm(this.$t('Demo.Comfirm.Delete.Content'), this.$t('Demo.Comfirm.Delete.Tip'), {
+      this.$confirm(
+        this.$t('Demo.Comfirm.Delete.Content'),
+        this.$t('Demo.Comfirm.Delete.Tip'),
+        {
           confirmButtonText: this.$t('Demo.Comfirm.Delete.确定'),
           cancelButtonText: this.$t('Demo.Comfirm.Delete.取消'),
           type: 'warning'
-        }).then(() => {
-          this.deleteDemoListItem({ _id })
-            .then((res) => {
-              const { status } = res.data;
-              if (status === 0) {
-                this.GETLIST().then(() => {
-                  this.$message.success(this.$t('Demo.刷新列表'));
-                });
-              }
-            });
-        }).catch(() => {
+        }
+      )
+        .then(() => {
+          this.deleteDemoListItem({ _id }).then(res => {
+            const { status } = res.data;
+            if (status === 0) {
+              this.GETLIST().then(() => {
+                this.$message.success(this.$t('Demo.刷新列表'));
+              });
+            }
+          });
+        })
+        .catch(() => {
           this.$message({
             type: 'info',
             message: this.$t('Demo.Comfirm.Delete.已取消删除')
-          });          
+          });
         });
     },
     handleEditItem (_id) {

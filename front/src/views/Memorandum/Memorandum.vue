@@ -7,7 +7,7 @@
         size="small"
         @click.native="handleAddItem"
         v-permission="'MEMORANDUMADD'"
-        >{{$t('menuList.新增事件')}}</el-button
+        >{{ $t('menuList.新增事件') }}</el-button
       >
       <el-date-picker
         class="w-240 mgr-20"
@@ -54,27 +54,56 @@
         height="100%"
         :row-class-name="tableRowClassName"
       >
-        <el-table-column :label="$t('Memerandum.Order')" width="60" align="center">
+        <el-table-column
+          :label="$t('Memerandum.Order')"
+          width="60"
+          align="center"
+        >
           <template slot-scope="scope">
             {{ scope.$index + 1 }}
           </template>
         </el-table-column>
-        <el-table-column :label="$t('Memerandum.CreatedTime')" width="170" align="center">
+        <el-table-column
+          :label="$t('Memerandum.CreatedTime')"
+          width="170"
+          align="center"
+        >
           <template slot-scope="scope">
             {{ scope.row.createdTime | createdTimeFilters }}
           </template>
         </el-table-column>
-        <el-table-column prop="desc" :label="$t('Memerandum.Desc')" align="center" />
-        <el-table-column :label="$t('Memerandum.Tags')" width="240" align="center">
+        <el-table-column
+          prop="desc"
+          :label="$t('Memerandum.Desc')"
+          align="center"
+        />
+        <el-table-column
+          :label="$t('Memerandum.Tags')"
+          width="240"
+          align="center"
+        >
           <template slot-scope="scope">
             <span v-for="(i, index) in scope.row.tag" :key="i.id">
-              <el-tag class="tags" effect="dark" size="small" :type="tagType(index)">{{
-                i
-              }}</el-tag>
+              <el-tag
+                class="tags"
+                effect="dark"
+                size="small"
+                :type="tagType(index)"
+                >{{ i }}</el-tag
+              >
             </span>
           </template>
         </el-table-column>
-        <el-table-column :label="$t('Memerandum.Operation')" width="350" align="center" v-if='$hasPermission("MEMORANDUMCHECK,MEMORANDUMEDIT,MEMORANDUMDELETE,MEMORANDUMSETFIRST")'>
+        <el-table-column
+          :label="$t('Memerandum.Operation')"
+          width="350"
+          align="center"
+          v-if="
+            $hasPermission(
+              'MEMORANDUMCHECK,MEMORANDUMEDIT,MEMORANDUMDELETE,MEMORANDUMSETFIRST'
+            )
+          "
+        >
           <template slot-scope="scope">
             <el-button
               type="success"
@@ -94,13 +123,25 @@
               type="danger"
               size="mini"
               @click.native="hanldeDelete(scope.row._id)"
-               v-permission="'MEMORANDUMDELETE'"
+              v-permission="'MEMORANDUMDELETE'"
               >{{ $t('menuList.Delete') }}</el-button
             >
-            <el-button v-permission="'MEMORANDUMSETFIRST'" type="warning" v-if="scope.row.isSetFirst" size="mini" @click.native='handleSwitchSetFirst(scope.row)'
+            <el-button
+              v-permission="'MEMORANDUMSETFIRST'"
+              type="warning"
+              v-if="scope.row.isSetFirst"
+              size="mini"
+              @click.native="handleSwitchSetFirst(scope.row)"
               >{{ $t('Memerandum.取消置顶') }}</el-button
             >
-            <el-button v-permission="'MEMORANDUMSETFIRST'" type="warning" v-else size="mini" @click.native='handleSwitchSetFirst(scope.row)'>{{ $t('Memerandum.设为置顶') }}</el-button>
+            <el-button
+              v-permission="'MEMORANDUMSETFIRST'"
+              type="warning"
+              v-else
+              size="mini"
+              @click.native="handleSwitchSetFirst(scope.row)"
+              >{{ $t('Memerandum.设为置顶') }}</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -124,9 +165,9 @@
       @closeDialog="closeDialog"
     />
     <MemorandumPreviewDrawer
-      :memorandumPreviewDrawer='memorandumPreviewDrawer'
-      :editorContent='editorContent'
-      @closeMemorandumPreview='closeMemorandumPreview'
+      :memorandumPreviewDrawer="memorandumPreviewDrawer"
+      :editorContent="editorContent"
+      @closeMemorandumPreview="closeMemorandumPreview"
     />
   </div>
 </template>
@@ -156,8 +197,6 @@ export default {
         }
       },
       params: {
-        page: 1,
-        size: 20,
         keyword: null,
         tag: null,
         startTime: null,
@@ -201,10 +240,13 @@ export default {
       return await this.$axios.get('/deleteMemorandumListItemById', { params });
     },
     async switchMemorandumListItemIsSetFirst (data) {
-      return await this.$axios.post('/switchMemorandumListItemIsSetFirst', data);
+      return await this.$axios.post(
+        '/switchMemorandumListItemIsSetFirst',
+        data
+      );
     },
     GETLIST () {
-      return new Promise((resolve) => {
+      return new Promise(resolve => {
         this.isLoading = true;
         this.params.size = this.size;
         this.params.page = this.page;
@@ -243,7 +285,10 @@ export default {
     closeDialog (boolean) {
       this.memorandumAddDialog = false;
       if (boolean) {
-        this.GETLIST();
+        this.formatParams();
+        this.GETLIST().then(() => {
+          this.$message.success(this.$t('Memerandum.刷新列表'));
+        });
       }
     },
     hanldeCheck (content) {
@@ -255,18 +300,22 @@ export default {
       this.memorandumPreviewDrawer = false;
     },
     hanldeDelete (_id) {
-      this.$confirm(this.$t('Memerandum.Comfirm.Delete.Content'), this.$t('Memerandum.Comfirm.Delete.Tip'), {
-        confirmButtonText: this.$t('Memerandum.Comfirm.Delete.确定'),
-        cancelButtonText: this.$t('Memerandum.Comfirm.Delete.取消'),
-        type: 'warning'
-      })
+      this.$confirm(
+        this.$t('Memerandum.Comfirm.Delete.Content'),
+        this.$t('Memerandum.Comfirm.Delete.Tip'),
+        {
+          confirmButtonText: this.$t('Memerandum.Comfirm.Delete.确定'),
+          cancelButtonText: this.$t('Memerandum.Comfirm.Delete.取消'),
+          type: 'warning'
+        }
+      )
         .then(() => {
           this.deleteMemorandumListItemById({ _id }).then(res => {
             const { status } = res.data;
             if (status === 0) {
               this.GETLIST().then(() => {
-                  this.$message.success(this.$t('Memerandum.刷新列表'));
-                });
+                this.$message.success(this.$t('Memerandum.刷新列表'));
+              });
             }
           });
         })
@@ -308,25 +357,32 @@ export default {
       return row.isSetFirst ? 'is-set-first' : '';
     },
     handleSwitchSetFirst ({ _id, isSetFirst }) {
-      this.$confirm(this.$t('Memerandum.Comfirm.Top.Content'), this.$t('Memerandum.Comfirm.Top.Tip'), {
+      this.$confirm(
+        this.$t('Memerandum.Comfirm.Top.Content'),
+        this.$t('Memerandum.Comfirm.Top.Tip'),
+        {
           confirmButtonText: this.$t('Memerandum.Comfirm.Top.确定'),
           cancelButtonText: this.$t('Memerandum.Comfirm.Top.取消'),
           type: 'warning'
-        }).then(() => {
-          this.switchMemorandumListItemIsSetFirst({ _id, isSetFirst })
-            .then((res) => {
+        }
+      )
+        .then(() => {
+          this.switchMemorandumListItemIsSetFirst({ _id, isSetFirst }).then(
+            res => {
               const { status } = res.data;
               if (status === 0) {
                 this.GETLIST().then(() => {
                   this.$message.success(this.$t('Memerandum.刷新列表'));
                 });
               }
-            });
-        }).catch(() => {
+            }
+          );
+        })
+        .catch(() => {
           this.$message({
             type: 'info',
             message: this.$t('Memerandum.Comfirm.Top.已取消删除')
-          });  
+          });
         });
     },
     tagType (index) {
@@ -337,8 +393,18 @@ export default {
           return '';
         case 2:
           return 'danger';
-        default: '';
+        default:
+          '';
       }
+    },
+    formatParams () {
+      this.theTimeRange = null;
+      this.params = {
+        keyword: null,
+        tag: null,
+        startTime: null,
+        endTime: null
+      };
     }
   },
   created () {

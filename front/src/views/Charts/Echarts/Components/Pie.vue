@@ -1,5 +1,5 @@
 <template>
-  <div id="Pie"></div>
+  <div id="Pie" ref='Pie'></div>
 </template>
 
 <script>
@@ -63,17 +63,21 @@ export default {
   methods: {},
   created () {},
   mounted () {
-    const myChart = echarts.init(document.getElementById('Pie'));
-    myChart.setOption(this.option);
+    this.$nextTick(() => {
+      const myChart = echarts.init(this.$refs.Pie);
+      myChart.setOption(this.option);
 
-    window.onresize = function () {
-      myChart.resize();
-    };
+      window.onresize = function () {
+        myChart.resize();
+      };
+    });
   },
   watch: {
     '$i18n.locale' () {
-      const myChart = echarts.init(document.getElementById('Pie'));
-      myChart.setOption(this.option);
+      this.$nextTick(() => {
+        const myChart = echarts.init(this.$refs.Pie);
+        myChart.setOption(this.option);
+      });
     }
   }
 };

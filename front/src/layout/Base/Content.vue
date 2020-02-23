@@ -1,7 +1,10 @@
 <template>
-  <keep-alive>
-    <router-view />
-  </keep-alive>
+  <span>
+    <keep-alive>
+      <router-view v-if="$route.meta.keepAlive"></router-view>
+    </keep-alive>
+    <router-view v-if="!$route.meta.keepAlive"></router-view>
+  </span>
 </template>
 
 <script>
@@ -10,7 +13,9 @@ export default {
   components: {},
   props: {},
   data () {
-    return {};
+    return {
+      keep: ''
+    };
   },
   computed: {},
   methods: {},

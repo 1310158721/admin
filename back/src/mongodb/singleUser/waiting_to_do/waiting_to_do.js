@@ -78,8 +78,8 @@ class WAITINGTODO {
       ];
 
       WaitingTodoModel.find()
-        .countDocuments()
         .and($and)
+        .countDocuments()
         .then(count => {
           WaitingTodoModel.find({}, { __v: 0 })
             // 将数据库所有的待办列表事项按 字段isSetFirstTime 逆排序

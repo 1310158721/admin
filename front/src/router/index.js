@@ -11,6 +11,8 @@ import devRoutes from './devRoutes';
 import NProgress from 'nprogress'; // 页面加载进度条
 import 'nprogress/nprogress.css';
 
+import ErrorPage from '@/views/Error/Error';
+
 Vue.use(VueRouter);
 
 // NProgress 的简单配置
@@ -37,9 +39,29 @@ const fixRouteConfig = [
     path: '/Login',
     name: 'Login',
     meta: {
-      title: 'Login'
+      title: 'Login',
+      keepAlive: true
     },
     component: () => import('@/layout/Login')
+  },
+  {
+    path: '/NotMenu',
+    name: 'NotMenu',
+    meta: {},
+    component: () => import('@/layout/NotMenu'),
+    children: [
+      {
+        path: '/ErrorPage',
+        name: 'ErrorPage',
+        meta: {
+          title: '404页面',
+          isNotMenu: true,
+          keepAlive: true
+        },
+        component: ErrorPage,
+        children: null
+      }
+    ]
   }
 ];
 
@@ -115,13 +137,12 @@ let cacheRoutes = jsCookie.get('cacheRoutes')
   : [{ path: '/Dashboard', title: 'Dashboard' }];
 
 router.beforeEach((to, from, next) => {
-  document.title = to.meta.title;
+  document.title = to.meta.title || 'admin';
   NProgress.start();
 
   // 获取用户登录状态
   const token = jsCookie.get('token');
 
-  // 用户当前页面为登录页时
   if (to.path.includes('/Login')) {
     next();
   } else {
@@ -202,7 +223,14 @@ router.beforeEach((to, from, next) => {
             })
           );
       } else {
-        cacheRoutes = jsCookie.get('cacheRoutes')
+        // 跳转404页面
+        if (!to.matched.length) {
+          next({
+            name: 'ErrorPage',
+            replace: true
+          });
+        } else {
+          cacheRoutes = jsCookie.get('cacheRoutes')
           ? JSON.parse(jsCookie.get('cacheRoutes'))
           : [];
         if (
@@ -216,6 +244,7 @@ router.beforeEach((to, from, next) => {
         }
         jsCookie.set('cacheRoutes', JSON.stringify(cacheRoutes));
         next();
+        }
       }
     }
   }

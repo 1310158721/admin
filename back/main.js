@@ -28,6 +28,14 @@ app.all('*', (req, res, next) => {
   res.header('Access-Control-Allow-Headers', 'Content-Type');
   res.header('Access-Control-Allow-Methods', '*');
   res.header('Content-Type', 'application/json;charset=utf-8');
+
+  const { token } = req.signedCookies;
+  if (token) {
+    res.cookie('token', token, {
+      maxAge: 1000 * 60 * 60 * 2,
+      signed: true
+    });
+  }
   
   next();
 });

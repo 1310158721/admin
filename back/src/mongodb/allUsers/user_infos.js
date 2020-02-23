@@ -449,7 +449,7 @@ class USERINFOS {
                * 获取所有 oss 当前存在的 图片
                */
               result.objects.forEach(obj => {
-                OssHasPhotos.push(obj.name);
+                OssHasPhotos.push(obj.name.replace('avatar/', ''));
               });
               
               /**
@@ -457,7 +457,10 @@ class USERINFOS {
                */
               const unExist = OssHasPhotos.filter(
                 item => !mongodbPhotos.includes(item)
-              );
+              ).map((i) => {
+                i = 'avatar/' + i;
+                return i;
+              });
               /**
                * Oss 删除当前不被需要的图片
                */

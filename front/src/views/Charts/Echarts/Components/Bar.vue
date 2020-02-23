@@ -1,5 +1,5 @@
 <template>
-  <div id='bar'></div>
+  <div id='bar' ref='bar'></div>
 </template>
 
 <script>
@@ -34,17 +34,21 @@ export default {
   methods: {},
   created () {},
   mounted () {
-    const myChart = echarts.init(document.getElementById('bar'));
-    myChart.setOption(this.option);
+    this.$nextTick(() => {
+      const myChart = echarts.init(this.$refs.bar);
+      myChart.setOption(this.option);
 
-    window.onresize = function () {
-      myChart.resize();
-    };
+      window.onresize = function () {
+        myChart.resize();
+      };
+    });
   },
   watch: {
     '$i18n.locale' () {
-      const myChart = echarts.init(document.getElementById('bar'));
-      myChart.setOption(this.option);
+      this.$nextTick(() => {
+        const myChart = echarts.init(this.$refs.bar);
+        myChart.setOption(this.option);
+      });
     }
   }
 };

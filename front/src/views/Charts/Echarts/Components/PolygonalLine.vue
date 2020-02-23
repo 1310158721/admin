@@ -1,5 +1,5 @@
 <template>
-  <div id="polygonal-line"></div>
+  <div id="polygonal-line" ref='Polygonal'></div>
 </template>
 
 <script>
@@ -34,19 +34,23 @@ export default {
   methods: {},
   created () {},
   mounted () {
-    const myChart = echarts.init(document.getElementById('polygonal-line'));
-    myChart.setOption(this.option);
+    this.$nextTick(() => {
+      const myChart = echarts.init(this.$refs.Polygonal);
+      myChart.setOption(this.option);
 
-    window.onresize = function () {
-      setTimeout(() => {
-        myChart.resize();
-      }, 200);
-    };
+      window.onresize = function () {
+        setTimeout(() => {
+          myChart.resize();
+        }, 200);
+      };
+    });
   },
   watch: {
     '$i18n.locale' () {
-      const myChart = echarts.init(document.getElementById('polygonal-line'));
-      myChart.setOption(this.option);
+      this.$nextTick(() => {
+        const myChart = echarts.init(this.$refs.Polygonal);
+        myChart.setOption(this.option);
+      });
     }
   }
 };

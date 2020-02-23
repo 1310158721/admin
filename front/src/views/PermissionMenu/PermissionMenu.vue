@@ -255,8 +255,11 @@ export default {
     if (isShouldRefresh) {
       this.$nextTick(() => {
         setTimeout(() => {
-          window.location.reload();
-        }, 1000);
+          this.$message.warning('修改自身数据，需要中心刷新页面才能生效');
+          setTimeout(() => {
+            window.location.reload();
+          }, 500);
+        }, 500);
       });
     }
   },

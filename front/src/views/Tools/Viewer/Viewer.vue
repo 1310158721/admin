@@ -1,6 +1,6 @@
 <template>
   <div v-if='picArr' class="viewer-wrapper">
-    <div class="images" v-viewer.static="{inline: false}">
+    <div class="images" v-viewer>
       <img width="100" height='100' v-for="src in picArr" :src="src" :key="src">
     </div>
   </div>

@@ -55,16 +55,12 @@ export default {
         'justify', // 对齐方式
         'undo', // 撤销
         'redo', // 重复
-        'code'
+        'code',
+        'table',
+        'list'
       ],
       // 自定义字体
-      fontNames: [
-        '宋体',
-        '微软雅黑',
-        'Arial',
-        'Tahoma',
-        'Verdana'
-      ]
+      fontNames: ['宋体', '微软雅黑', 'Arial', 'Tahoma', 'Verdana']
     };
   },
   methods: {},
@@ -84,7 +80,8 @@ export default {
       this.editor.customConfig.uploadImgShowBase64 = true;
     }
     // 通过 url 参数配置 debug 模式
-    this.editor.customConfig.debug = location.href.indexOf('wangeditor_debug_mode=1') > 0;
+    this.editor.customConfig.debug =
+      location.href.indexOf('wangeditor_debug_mode=1') > 0;
 
     // editor 改变时
     this.editor.customConfig.onchange = () => {
@@ -154,7 +151,8 @@ export default {
     flex: 1;
     .w-e-text {
       overflow: auto;
-      pre, code {
+      pre,
+      code {
         overflow: auto;
       }
     }
@@ -163,6 +161,20 @@ export default {
       display: block;
       margin: 5px 0;
     }
+  }
+
+  /deep/table tr th {
+    background-color: rgba(0, 0, 0, 0.3);
+    border: 1px solid #cccccc;
+    text-align: center;
+    vertical-align: middle;
+  }
+  /deep/table tr td {
+    min-width: 100px;
+    text-align: center;
+    vertical-align: middle;
+    border: 1px solid #cccccc;
+    padding: 5px;
   }
 }
 </style>

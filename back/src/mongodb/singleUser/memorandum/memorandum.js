@@ -71,29 +71,34 @@ class MEMORANDUM {
       ];
 
       MemorandumModel.find()
-        .sort({ isSetFirstTime: -1 })
         .and($and)
-        // 分页搜索（limit/skip）
-        .limit(Number.parseInt(size))
-        .skip(Number.parseInt(page - 1) * size)
-        // 将分页后的 待办列表事项按 字段createdTime 逆排序
-        .sort({ createdTime: -1 })
-        .then(list => {
-          res.send({
-            result: {
-              list,
-              count: list.length
-            },
-            status: 0,
-            msg: '查询备忘录列表成功'
-          });
-        })
-        .catch(err => {
-          res.send({
-            result: err,
-            status: 400,
-            msg: '查询备忘录列表失败'
-          });
+        .countDocuments()
+        .then(count => {
+          MemorandumModel.find()
+            .sort({ isSetFirstTime: -1 })
+            .and($and)
+            // 分页搜索（limit/skip）
+            .limit(Number.parseInt(size))
+            .skip(Number.parseInt(page - 1) * size)
+            // 将分页后的 待办列表事项按 字段createdTime 逆排序
+            .sort({ createdTime: -1 })
+            .then(list => {
+              res.send({
+                result: {
+                  list,
+                  count
+                },
+                status: 0,
+                msg: '查询备忘录列表成功'
+              });
+            })
+            .catch(err => {
+              res.send({
+                result: err,
+                status: 400,
+                msg: '查询备忘录列表失败'
+              });
+            });
         });
     });
   }
@@ -299,38 +304,44 @@ class MEMORANDUM {
    * 切换置顶状态
    */
   SwitchMemorandumListItemIsSetFirst() {
-    this.app.post('/api/switchMemorandumListItemIsSetFirst', (req, res, next) => {
-      const { isSetFirst, _id } = req.body;
-      if (!_id) {
-        res.send({
-          result: null,
-          status: 400,
-          msg: '参数不能为空'
-        })
-      } else {
-        const isSetFirstTime = isSetFirst ? 0 : Date.now();
-        const { token } = req.signedCookies;
-        const MemorandumModel = this.db.model(
-          token + '_memorandum',
-          this.MemorandumSchema
-        );
-        MemorandumModel.findByIdAndUpdate(_id, { isSetFirst: !isSetFirst, isSetFirstTime })
-          .then(() => {
-            res.send({
-              result: null,
-              status: 0,
-              msg: '更新备忘录数据置顶状态成功'
-            })
+    this.app.post(
+      '/api/switchMemorandumListItemIsSetFirst',
+      (req, res, next) => {
+        const { isSetFirst, _id } = req.body;
+        if (!_id) {
+          res.send({
+            result: null,
+            status: 400,
+            msg: '参数不能为空'
+          });
+        } else {
+          const isSetFirstTime = isSetFirst ? 0 : Date.now();
+          const { token } = req.signedCookies;
+          const MemorandumModel = this.db.model(
+            token + '_memorandum',
+            this.MemorandumSchema
+          );
+          MemorandumModel.findByIdAndUpdate(_id, {
+            isSetFirst: !isSetFirst,
+            isSetFirstTime
           })
-          .catch((err) => {
-            res.send({
-              result: err,
-              status: 400,
-              msg: '更新备忘录数据置顶状态失败'
+            .then(() => {
+              res.send({
+                result: null,
+                status: 0,
+                msg: '更新备忘录数据置顶状态成功'
+              });
             })
-          })
+            .catch(err => {
+              res.send({
+                result: err,
+                status: 400,
+                msg: '更新备忘录数据置顶状态失败'
+              });
+            });
+        }
       }
-    })
+    );
   }
 
   /**
@@ -338,14 +349,20 @@ class MEMORANDUM {
    */
   GetDbAllCollections() {
     const _this = this;
-    this.db.on("connected",function(){
-      const collections = [];
-      this.db.collections()
-        .then((data) => {
+    this.db.on('connected', function() {
+      let timer = setInterval(() => {
+        console.log(
+          'Memorandum 阿里云OSS checking____________________________________________'
+        );
+        const collections = [];
+        // 查询所有用户的 memorandum 集合
+        this.db.collections().then(data => {
           if (data.length) {
-            data.map((i) => {
+            data.map(i => {
               collections.push(i.s.namespace.collection.replace(/s$/g, ''));
-            })
+            });
+
+            console.log(collections);
 
             let len = collections.length;
             let start = 0;
@@ -353,69 +370,66 @@ class MEMORANDUM {
             let content = [];
             function loop(start) {
               if (start >= len) {
-                let timer = setInterval(() => {
-                  console.log(
-                    'Memorandum 阿里云OSS checking____________________________________________'
-                  );
-  
-                  let mongodbPhotos = '';
-                  content.map((i) => {
-                    if (i.content) {
-                      mongodbPhotos += i.content;
+                let mongodbPhotos = '';
+                content.map(i => {
+                  if (i.content) {
+                    mongodbPhotos += i.content;
+                  }
+                });
+
+                myOss.setBuckName(global.buckName).then(() => {
+                  /**
+                   * 搜索 oss global.buckName（bucket） 是否存在 record 文件夹
+                   */
+                  myOss.listDir('record/').then(result => {
+                    /**
+                     * oss 当前存在的图片
+                     */
+                    const OssHasPhotos = [];
+                    if (result.objects && result.objects.length) {
+                      /**
+                       * 获取所有 oss 当前存在的 图片
+                       */
+                      result.objects.forEach(obj => {
+                        OssHasPhotos.push(obj.name.replace('record/', ''));
+                      });
+
+                      /**
+                       * 根据 oss 当前存在的 图片 与 对应数据库当前存在的所有图片 匹配，找出 oss 当前不被需要的图片
+                       */
+                      const unExist = OssHasPhotos.filter(
+                        item => !mongodbPhotos.includes(item)
+                      ).map(i => {
+                        i = 'record/' + i;
+                        return i;
+                      });
+
+                      /**
+                       * Oss 删除当前不被需要的图片
+                       */
+                      myOss.deleteMulti(unExist).then(() => {
+                        console.log('Memorandum 相关的多余图片已删除');
+                      });
                     }
                   });
-  
-                  myOss.setBuckName(global.buckName).then(() => {
-                    /**
-                     * 搜索 oss global.buckName（bucket） 是否存在 record 文件夹
-                     */
-                    myOss.listDir('record/').then(result => {
-                      /**
-                       * oss 当前存在的图片
-                       */
-                      const OssHasPhotos = [];
-                      if (result.objects && result.objects.length) {
-                        /**
-                         * 获取所有 oss 当前存在的 图片
-                         */
-                        result.objects.forEach(obj => {
-                          OssHasPhotos.push(obj.name);
-                        });
-                        
-                        /**
-                         * 根据 oss 当前存在的 图片 与 对应数据库当前存在的所有图片 匹配，找出 oss 当前不被需要的图片
-                         */
-                        const unExist = OssHasPhotos.filter(
-                          item => !mongodbPhotos.includes(item)
-                        );
-                        /**
-                         * Oss 删除当前不被需要的图片
-                         */
-                        myOss.deleteMulti(unExist).then(() => {
-                          console.log('Memorandum 相关的多余图片已删除');
-                        });
-                      }
-                    });
-                  });
-                }, global.deleteOssPhotoTime)
-
+                });
                 return false;
               }
               const MemorandumModel = _this.db.model(
                 collections[start],
                 _this.MemorandumSchema
               );
-  
-              MemorandumModel.find()
-                .then((doc) => {
-                  content = [...content, ...doc]
-                  start += 1;
-                  loop(start);
-                })
+
+              MemorandumModel.find().then(doc => {
+                content = [...content, ...doc];
+                start += 1;
+                loop(start);
+              });
             }
           }
-        })
-    })
+        });
+      }, global.deleteOssPhotoTime);
+    });
   }
 
   Start() {

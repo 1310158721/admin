@@ -61,6 +61,8 @@ class LOADFILES {
 
   // 生成Excel文件模版
   ExcelTemplate(xlsx) {
+    // 清空之前生成的内容，防止生成的word文件内容多次重复，开启新文档
+    xlsx.startNewDoc();
     var sheet = xlsx.makeNewSheet()
     sheet.name = 'Excel Test'
 
@@ -101,7 +103,7 @@ class LOADFILES {
       docx.generate(res);
 
       // 清空之前生成的内容，防止生成的word文件内容多次重复
-      docx.data = [];
+      docx._events.clearData();
     });
   }
 
@@ -120,8 +122,6 @@ class LOADFILES {
 
       // 输出给客户端
       xlsx.generate(res);
-
-      xlsx.data = [];
     })
   }
 

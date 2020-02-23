@@ -33,6 +33,7 @@ const en = {
     'Clipboard': 'Clipboard',
     'Viewer': 'Viewer',
     'VueDraggable': 'VueDraggable',
+    '二维码': 'Qrcode',
     '地图': 'Map',
     '百度地图': 'BaiduMap',
     '权限管理': 'Permission',
