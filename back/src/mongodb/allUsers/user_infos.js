@@ -97,7 +97,7 @@ class USERINFOS {
       const { _id } = req.query;
       const { token } = req.signedCookies;
       const conditions = _id ? { _id } : { token };
-      this.UserModel.find(conditions, { _id: 0, token: 0 })
+      this.UserModel.find(conditions, { token: 0 })
         .then((user) => {
           if (!user.length) {
             res.send({
@@ -135,7 +135,6 @@ class USERINFOS {
   GetAllUserInfos() {
     this.app.get('/api/getAllUserInfos', (req, res, next) => {
       const { token } = req.signedCookies;
-
       this.UserModel.find({ token }, { token: 0 })
         .then((user) => {
           if (!user.length) {

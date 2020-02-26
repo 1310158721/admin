@@ -104,7 +104,7 @@ export default {
     handleError (err, file, fileList) {
       this.$emit('errorCallback', err, file, fileList);
     },
-    handleExceed (files, fileList) {
+    handleExceed () {
       Message.warning('图片最大上传数不能超过' + this.limit);
     }
   },

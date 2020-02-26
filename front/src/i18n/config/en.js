@@ -13,6 +13,8 @@ const en = {
     '待办列表': 'WaitingList',
     '完成': 'Finish',
     'DELETE': 'Delete',
+    '分享': 'Share',
+    '更多': 'more',
     '新增事项': 'Add Event',
     '图表': 'Charts',
     'Echarts': 'Echarts',
@@ -278,7 +280,7 @@ const en = {
     Clipboard: {
       text1: '1、Realize the copy function through the form of instruction passing value v-clipboard=\'"scscscsc"\'',
       button1: 'I am the text to be copied (dynamically modifiable)',
-      text2: '2. Pass the value clipboard data = \'scscascsa \ \'by binding an attribute of an element (such as clipboard data) with an instruction',
+      text2: '2. Pass the value clipboard data = \'scscascsa \'by binding an attribute of an element (such as clipboard data) with an instruction',
       inputPlaceholder: 'Please enter content',
       Copy: 'Copy'
     }

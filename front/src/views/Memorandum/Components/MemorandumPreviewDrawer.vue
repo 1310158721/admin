@@ -7,7 +7,7 @@
     :visible.sync="memorandumPreviewDrawer"
     direction="rtl"
     :before-close="closeMemorandumPreview"
-    size="800px"
+    size="1000px"
     :withHeader="false"
     destroy-on-close
     @opened="openMemorandumPreview"

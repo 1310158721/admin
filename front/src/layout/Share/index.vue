@@ -1,12 +1,12 @@
 <template>
-  <div id="app-router-wrapper">
+  <div id='share-page'>
     <router-view />
   </div>
 </template>
 
 <script>
 export default {
-  name: 'App',
+  name: 'SharePage',
   components: {},
   props: {},
   data () {
@@ -21,8 +21,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#app-router-wrapper {
+#share-page {
   width: 100%;
   height: 100%;
+  background-color: rgba(0,0,0,.2);
 }
 </style>

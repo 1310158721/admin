@@ -115,12 +115,13 @@ export default {
     // 上传图片监控函数
     this.editor.customConfig.uploadImgHooks = {
       // 图片上传之前触发
-      before: (xhr, editor, files) => {
+      // before: (xhr, editor, files) => {
+      before: () => {
         // this.SETGLOBALMASK({ loading: true, text: '图片上传中...' });
       },
       // 如果服务器端返回的不是 {errno:0, data: [...]} 这种格式，可使用该配置
       // 但是，服务器端返回的必须是一个 JSON 格式字符串！！！否则会报错
-      customInsert: (insertImg, result, editor) => {
+      customInsert: (insertImg, result) => {
         const url = result.result.url;
         insertImg(url);
         setTimeout(() => {

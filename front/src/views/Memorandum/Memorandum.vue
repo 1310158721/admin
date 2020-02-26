@@ -96,7 +96,7 @@
         </el-table-column>
         <el-table-column
           :label="$t('Memerandum.Operation')"
-          width="350"
+          width="150"
           align="center"
           v-if="
             $hasPermission(
@@ -105,43 +105,19 @@
           "
         >
           <template slot-scope="scope">
-            <el-button
-              type="success"
-              size="mini"
-              @click.native="hanldeCheck(scope.row.content)"
-              v-permission="'MEMORANDUMCHECK'"
-              >{{ $t('menuList.查看') }}</el-button
-            >
-            <el-button
-              type="info"
-              size="mini"
-              @click.native="hanldeEdit(scope.row._id)"
-              v-permission="'MEMORANDUMEDIT'"
-              >{{ $t('menuList.Edit') }}</el-button
-            >
-            <el-button
-              type="danger"
-              size="mini"
-              @click.native="hanldeDelete(scope.row._id)"
-              v-permission="'MEMORANDUMDELETE'"
-              >{{ $t('menuList.Delete') }}</el-button
-            >
-            <el-button
-              v-permission="'MEMORANDUMSETFIRST'"
-              type="warning"
-              v-if="scope.row.isSetFirst"
-              size="mini"
-              @click.native="handleSwitchSetFirst(scope.row)"
-              >{{ $t('Memerandum.取消置顶') }}</el-button
-            >
-            <el-button
-              v-permission="'MEMORANDUMSETFIRST'"
-              type="warning"
-              v-else
-              size="mini"
-              @click.native="handleSwitchSetFirst(scope.row)"
-              >{{ $t('Memerandum.设为置顶') }}</el-button
-            >
+            <el-dropdown class="operation-dropdown" trigger='click'>
+              <span class="el-dropdown-link">
+                {{ $t('menuList.更多') }}<i class="el-icon-arrow-down el-icon--right"></i>
+              </span>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item @click.native='hanldeCheck(scope.row.content)' v-permission="'MEMORANDUMCHECK'">{{ $t('menuList.查看') }}</el-dropdown-item>
+                <el-dropdown-item @click.native='hanldeEdit(scope.row._id)' v-permission="'MEMORANDUMEDIT'">{{ $t('menuList.Edit') }}</el-dropdown-item>
+                <el-dropdown-item @click.native='hanldeDelete(scope.row._id)' v-permission="'MEMORANDUMDELETE'">{{ $t('menuList.Delete') }}</el-dropdown-item>
+                <el-dropdown-item @click.native='handleSwitchSetFirst(scope.row)' v-if="scope.row.isSetFirst" v-permission="'MEMORANDUMSETFIRST'">{{ $t('Memerandum.取消置顶') }}</el-dropdown-item>
+                <el-dropdown-item @click.native='handleSwitchSetFirst(scope.row)' v-else v-permission="'MEMORANDUMSETFIRST'">{{ $t('Memerandum.设为置顶') }}</el-dropdown-item>
+                <el-dropdown-item @click.native='handleShare(scope.row)' ref='clipboard' v-clipboard='clipboardData' v-permission="'MEMORANDUMSHARE'">{{ $t('menuList.分享') }}</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
           </template>
         </el-table-column>
       </el-table>
@@ -177,6 +153,7 @@ import { $formDate } from '@/assets/js/utils';
 import memorandumAddDialog from './Components/MemorandumAddDialog';
 import LISTMINXIN from '@/mixin/list-mixin';
 import MemorandumPreviewDrawer from './Components/MemorandumPreviewDrawer';
+import { mapMutations } from 'vuex';
 export default {
   name: 'Memorandum',
   mixins: [LISTMINXIN],
@@ -206,7 +183,8 @@ export default {
       memorandumAddDialog: false,
       id: null,
       memorandumPreviewDrawer: false,
-      editorContent: null
+      editorContent: null,
+      clipboardData: null
     };
   },
   computed: {
@@ -228,6 +206,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(['SETMENULIST']),
     async getMemorandumList () {
       return await this.$axios.get('/getMemorandumList', {
         params: this.params
@@ -405,6 +384,12 @@ export default {
         startTime: null,
         endTime: null
       };
+    },
+    handleShare (row) {
+      // 复制链接
+      const url = window.origin + '/#/MemorandumShare?uid=' + this.$store.state.userInfo._id + '&u=/getShareItemInfo' + '&_id=' + row._id;
+      this.clipboardData = url;
+      console.log(this.clipboardData);
     }
   },
   created () {
@@ -418,5 +403,9 @@ export default {
 <style lang="scss" scoped>
 .tags {
   margin: 0 2px;
+}
+.operation-dropdown {
+  width: 96px;
+  cursor: pointer;
 }
 </style>

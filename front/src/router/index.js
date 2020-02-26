@@ -45,6 +45,26 @@ const fixRouteConfig = [
     component: () => import('@/layout/Login')
   },
   {
+    path: '/Share',
+    name: 'Share',
+    meta: {},
+    component: () => import('@/layout/Share'),
+    redirect: '/MemorandumShare',
+    children: [
+      {
+        path: '/MemorandumShare',
+        name: 'MemorandumShare',
+        meta: {
+          title: '备忘录分享页面',
+          isNotMenu: true,
+          keepAlive: false
+        },
+        component: () => import('@/views/Memorandum/Components/Share'),
+        children: null
+      }
+    ]
+  },
+  {
     path: '/NotMenu',
     name: 'NotMenu',
     meta: {},
@@ -148,10 +168,14 @@ router.beforeEach((to, from, next) => {
   } else {
     // 用户当前页面不为登录页，且用户登录状态失效
     if (!token) {
-      next({
-        path: '/Login',
-        replace: true
-      });
+      if (to.path === '/MemorandumShare') {
+        next();
+      } else {
+        next({
+          path: '/Login',
+          replace: true
+        });
+      }
     } else {
       // 用户当前登录状态不失效，单 vuex 的 menuList 为 null 时
       if (!store.state.menuList) {

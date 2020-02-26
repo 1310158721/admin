@@ -4,9 +4,6 @@
 import axios from 'axios';
 import Cookie from 'js-cookie';
 import { Message } from 'element-ui';
-import router from '@/router';
-import store from '@/store';
-import jsCookie from 'js-cookie';
 
 // 页面加载进度条
 import NProgress from 'nprogress';

@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const MYOSS = require('../../../oss/oss');
 const myOss = new MYOSS();
+const $axios = require('axios');
 
 class MEMORANDUM {
   constructor() {
@@ -345,6 +346,64 @@ class MEMORANDUM {
   }
 
   /**
+   * 获取分享的信息
+   */
+  GetShareItemInfo() {
+    this.app.get('/api/getShareItemInfo', (req, res, next) => {
+      const { itemId = '', userId = '' } = req.query;
+      if (!itemId || !userId) {
+        res.send({
+          result: null,
+          status: 400,
+          msg: '参数不能为空'
+        })
+      } else {
+        const url = req.protocol + '://127.0.0.1:10000/api/getUserInfos';
+        $axios.get(url, { params: { _id: userId } })
+          .then((response) => {
+            const { status, result } = response.data;
+            if (status === 0) {
+              const token = result.account;
+              const MemorandumModel = this.db.model(
+                token + '_memorandum',
+                this.MemorandumSchema
+              );
+              MemorandumModel.findById(itemId)
+                .then((doc) => {
+                  res.send({
+                    result: doc,
+                    status: 0,
+                    msg: '查询数据成功'
+                  })
+                })
+                .catch((err) => {
+                  res.send({
+                    result: err,
+                    status: 400,
+                    msg: '查询数据失败'
+                  })
+                })
+              
+            } else {
+              res.send({
+                result: null,
+                status: 400,
+                msg: '查询用户信息失败'
+              })
+            }
+          })
+          .catch((err) => {
+            res.send({
+              result: err,
+              status: 400,
+              msg: '查询用户信息出错'
+            })
+          })
+      }
+    })
+  }
+
+  /**
    * 定时删除阿里云OSS对象上的多余图片文件（avatar 文件夹）
    */
   GetDbAllCollections() {
@@ -440,6 +499,7 @@ class MEMORANDUM {
     this.UpdateMemorandumListItemById();
     this.GetAllTags();
     this.SwitchMemorandumListItemIsSetFirst();
+    this.GetShareItemInfo();
     this.GetDbAllCollections();
   }
 }
