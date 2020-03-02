@@ -40,7 +40,7 @@
               <el-option
                 v-for="item in roleEnum"
                 :key="item.value"
-                :label="item.label"
+                :label="$t('PermissionMenu.RoleRankEnum.' + item.label)"
                 :value="item.value"
               />
             </el-select>

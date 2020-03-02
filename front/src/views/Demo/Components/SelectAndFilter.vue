@@ -45,7 +45,9 @@
         </template>
       </div>
     </span>
-    <span v-if="this.content" v-highlight v-html="content"></span>
+    <span>
+      <div v-if="this.content" v-highlight v-html="content"></div>
+    </span>
   </div>
 </template>
 
@@ -104,8 +106,7 @@ export default {
     flex: 1;
     height: 100%;
     overflow: auto;
-    padding: 20px;
-    box-sizing: border-box;
+    padding: 0 10px;
   }
 }
 </style>

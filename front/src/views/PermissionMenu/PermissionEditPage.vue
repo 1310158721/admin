@@ -38,7 +38,7 @@
               <el-option
                 v-for="item in roleEnum"
                 :key="item.value"
-                :label="item.label"
+                :label="$t('PermissionMenu.RoleRankEnum.' + item.label)"
                 :value="item.value"
               />
             </el-select>
@@ -186,7 +186,6 @@ export default {
             this.userInfos.password === this.$store.state.userInfo.password
           ) {
             this.isLoading = false;
-            this.$message.success(msg);
             if (this.userInfos.isSelf) {
               /**
                * 当前修改操作是主人对自身数据进行修改时，则跳转路由后要刷新页面
@@ -200,6 +199,7 @@ export default {
                 }
               });
             } else {
+              this.$message.success(msg);
               this.$router.back();
             }
           } else {

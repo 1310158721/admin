@@ -6,6 +6,7 @@ import store from '@/store';
 
 import originAsyncMenuRoutes from './asyncMenuRoutes';
 import notMenuRoutes from './notMenuRoutes';
+import demoRouters from './demoRouters';
 import devRoutes from './devRoutes';
 
 import NProgress from 'nprogress'; // 页面加载进度条
@@ -40,7 +41,7 @@ const fixRouteConfig = [
     name: 'Login',
     meta: {
       title: 'Login',
-      keepAlive: true
+      keepAlive: false
     },
     component: () => import('@/layout/Login')
   },
@@ -237,7 +238,7 @@ router.beforeEach((to, from, next) => {
 
                 // 添加权限菜单对应的路由
                 asyncMenuRoutesFirst.children.push(...asyncMenuRoutes);
-                router.addRoutes([asyncMenuRoutesFirst, ...notMenuRoutes]);
+                router.addRoutes([asyncMenuRoutesFirst, ...notMenuRoutes, ...demoRouters]);
               }
 
               next({

@@ -40,7 +40,13 @@
           size="small"
           type="primary"
           @click="$throttleSubmitForm('loginForm')"
-          >登录</el-button
+          >登 录</el-button
+        >
+        <el-button
+          size="small"
+          type="info"
+          @click="$throttleGuessLogin('loginForm')"
+          >游客登录</el-button
         >
       </el-form-item>
     </el-form>
@@ -69,7 +75,8 @@ export default {
           { min: 4, max: 10, message: '长度只能在 4 到 10 个字符哟' }
         ]
       },
-      shouldShowPsw: false
+      shouldShowPsw: false,
+      hasQeury: false
     };
   },
   computed: {
@@ -80,31 +87,62 @@ export default {
       return this.shouldShowPsw ? 'icon-icon-test' : 'icon-xianshi';
     },
     $throttleSubmitForm () {
-      return $throttle((ref) => this.submitForm(ref), 2000);
+      return $throttle(ref => this.submitForm(ref), 2000);
+    },
+    $throttleGuessLogin () {
+      return $throttle(ref => this.guessLogin(ref), 2000);
     }
   },
   methods: {
     submitForm (formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          this.$axios.get('/login', { params: this.formData })
-            .then((res) => {
-              const { status } = res.data;
-              if (status === 0) {
-                this.$router.push({
-                  path: '/Dashboard',
-                  replace: true
-                });
-              }
-            });
+          this.$axios.get('/login', { params: this.formData }).then(res => {
+            const { status } = res.data;
+            if (status === 0) {
+              this.$router.push({
+                path: '/Dashboard',
+                replace: true
+              });
+            }
+          });
         } else {
           console.log('error submit!!');
           return false;
         }
       });
+    },
+    guessLogin () {
+      const params = {
+        account: 'superadmin',
+        password: 'superadmin'
+      };
+      this.$axios.get('/login', { params }).then(res => {
+        const { status } = res.data;
+        if (status === 0) {
+          this.$router.push({
+            path: '/Dashboard',
+            replace: true
+          });
+        }
+      });
+    },
+    pushState () {
+      history.pushState(null, null, document.URL);
     }
   },
-  created () {},
+  created () {
+    if (this.$route.query.account) {
+      this.hasQeury = true;
+      this.formData = this.$route.query;
+      window.addEventListener('popstate', this.pushState);
+    }
+  },
+  destroyed () {
+    if (this.hasQeury) {
+      window.removeEventListener('popstate', this.pushState);
+    }
+  },
   mounted () {},
   watch: {}
 };
@@ -138,6 +176,8 @@ export default {
     }
     .el-button {
       width: 100%;
+      margin-left: 0;
+      margin-right: 0;
     }
   }
 }

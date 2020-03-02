@@ -19,19 +19,6 @@ Vue.directive('permission', {
   }
 });
 
-// 多权限值时使用，拥有其中一个便显示
-Vue.prototype.$hasPermission = function (checkPermission) {
-  const checkPermissionArr = checkPermission.replace(/ /g, '').split(',');
-  const { permission } = store.state.userInfo;
-  let canShow = false;
-  checkPermissionArr.map((i) => {
-    if (permission.includes(i)) {
-      canShow = true;
-    }
-  });
-  return canShow;
-};
-
 const ClipboardHandler = (el, binding) => {
   el.style.cursor = 'pointer';
   // 兼容外部元素点击事件，在点击事件后执行（可以通过外部元素设置属性来获取数据）
@@ -41,7 +28,7 @@ const ClipboardHandler = (el, binding) => {
       Message.error('复制内容不能为空');
       return false;
     }
-    
+
     // 指令有传值则取该值，没有则取指令绑定元素的 clipboard-data 属性值
     const clipBoardData = value || el.getAttribute('data-clipboard');
     const inputDom = document.createElement('input');
@@ -61,7 +48,7 @@ Vue.directive('clipboard', {
   },
   componentUpdated: function (el, binding) {
     return ClipboardHandler(el, binding);
-  },
+  }
 });
 
 Vue.directive('focus', {
@@ -70,21 +57,18 @@ Vue.directive('focus', {
   }
 });
 
-Vue.directive('highlight',function (el) {
+Vue.directive('highlight', function (el) {
   let blocks = el.querySelectorAll('pre code');
   el.style.lineHeight = '26px';
-  blocks.forEach((block)=>{
+  blocks.forEach(block => {
     hljs.highlightBlock(block);
   });
 });
 
-Vue.prototype.$highlight = function (el, cb) {
-  let blocks = el.querySelectorAll('pre code');
-  el.style.lineHeight = '26px';
-  blocks.forEach((block, index)=>{
-    hljs.highlightBlock(block);
-    if (index === blocks.length - 1) {
-      cb && cb();
-    }
-  });
-};
+Vue.directive('test', {
+  inserted (el) {
+    el.onclick = function () {
+      console.log('directive');
+    };
+  }
+});

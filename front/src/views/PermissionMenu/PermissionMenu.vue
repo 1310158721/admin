@@ -68,7 +68,7 @@
           :label="$t('PermissionMenu.Operation')"
           align="center"
           v-if="$hasPermission('PERMISSIONMENUEDIT,PERMISSIONMENUDELETE')"
-          width='160px'
+          width='240px'
         >
           <template slot-scope="scope">
             <el-button
@@ -85,6 +85,13 @@
               type="danger"
               @click.native="permissionDelete(scope.row._id)"
               >{{ $t('menuList.Delete') }}</el-button
+            >
+            <el-button
+              size="mini"
+              :disabled="scope.row.isSelf"
+              type="info"
+              @click.native="permissionLogin(scope.row)"
+              >{{ $t('PermissionMenu.登录') }}</el-button
             >
           </template>
         </el-table-column>
@@ -110,6 +117,8 @@
 import { $formDate } from '@/assets/js/utils';
 import { roleEnum } from '@/assets/js/enum';
 import LISTMINXIN from '@/mixin/list-mixin';
+import { mapMutations } from 'vuex';
+import jsCookie from 'js-cookie';
 export default {
   name: 'PermissionMenu',
   mixins: [LISTMINXIN],
@@ -158,6 +167,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(['SETMENULIST', 'SETUSERINFOS']),
     GETLIST () {
       this.isLoading = true;
       this.count = 0;
@@ -244,6 +254,30 @@ export default {
       if (row.isSelf) {
         return 'is-master';
       }
+    },
+    permissionLogin ({ account, password }) {
+      this.$confirm(this.$t('PermissionMenu.Comfirm.Content'), this.$t('PermissionMenu.Comfirm.Tip'), {
+        confirmButtonText: this.$t('PermissionMenu.Comfirm.确定'),
+        cancelButtonText: this.$t('PermissionMenu.Comfirm.取消'),
+        type: 'warning'
+      })
+        .then(() => {
+          jsCookie.remove('cacheRoutes');
+          jsCookie.remove('token');
+          this.SETMENULIST(null);
+          this.$router.push({
+            path: '/Login',
+            query: {
+              account, password
+            }
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: this.$t('PermissionMenu.Comfirm.已取消删除')
+          });
+        });
     }
   },
   created () {
@@ -254,15 +288,13 @@ export default {
     const { isShouldRefresh = false } = this.$route.params;
     if (isShouldRefresh) {
       this.$nextTick(() => {
+        this.$message.warning(this.$t('PermissionMenu.刷新'));
         setTimeout(() => {
-          this.$message.warning('修改自身数据，需要中心刷新页面才能生效');
-          setTimeout(() => {
-            window.location.reload();
-          }, 500);
+          window.location.reload();
         }, 500);
       });
     }
-  },
+  }
 };
 </script>
 

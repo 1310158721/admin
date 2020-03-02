@@ -44,10 +44,9 @@ export default {
   computed: {},
   methods: {
     openMemorandumPreview () {
-      this.isLoaded = false;
       this.$refs.previewer.innerHTML = this.editorContent;
       this.$highlight(this.$refs.previewer, () => {
-        this.isLoaded = true;
+        this.isLoaded = false;
       });
     },
     closeMemorandumPreview () {

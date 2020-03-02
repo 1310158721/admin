@@ -20,22 +20,32 @@ export default {
     };
   },
   computed: {},
-  methods: {},
+  methods: {
+    getData (query) {
+      const { uid = '', u = '', _id = '' } = query;
+      this.$axios.get(u, { params: { itemId: _id, userId: uid } }).then(res => {
+        const { result, status } = res.data;
+        if (status === 0) {
+          const { content } = result;
+          this.$refs.previewer.innerHTML = content;
+          this.$highlight(this.$refs.previewer, () => {
+            this.isLoaded = true;
+          });
+        }
+      });
+    }
+  },
   mounted () {
     const query = this.$route.query;
-    const { uid = '', u = '', _id = '' } = query;
-    this.$axios.get(u, { params: { itemId: _id, userId: uid } }).then(res => {
-      const { result, status } = res.data;
-      if (status === 0) {
-        const { content } = result;
-        this.$refs.previewer.innerHTML = content;
-        this.$highlight(this.$refs.previewer, () => {
-          this.isLoaded = true;
-        });
-      }
-    });
+    this.getData(query);
   },
-  watch: {}
+  watch: {},
+  // 监听路由参数改变时
+  beforeRouteUpdate (to, from, next) {
+    const query = to.query;
+    this.getData(query);
+    next();
+  }
 };
 </script>
 

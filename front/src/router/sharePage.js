@@ -4,7 +4,6 @@ const sharePage = [
     name: 'Share',
     meta: {},
     component: () => import('@/layout/Share'),
-    redirect: '/MemorandumShare',
     children: [
       {
         path: '/MemorandumShare',

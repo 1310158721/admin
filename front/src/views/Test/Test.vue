@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-test @click='handleClick'>
     Test
   </div>
 </template>
@@ -7,24 +7,13 @@
 <script>
 export default {
   name: 'Test',
-  components: {},
-  props: {},
-  data () {
-    return {
-      title: '标题'
-    };
-  },
-  computed: {},
   methods: {
-    handleSwitch (type) {
-      localStorage.setItem('locale', type);
-      this.$i18n.locale = type;
+    handleClick () {
+      console.log('test');
     }
-  },
-  created () {},
-  mounted () {},
-  watch: {}
+  }
 };
 </script>
 
 <style lang="scss" scoped></style>
+

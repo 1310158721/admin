@@ -120,9 +120,9 @@ class PERMISSIONMENU {
             .then((menu) => {
               this.dealListButtonsPermission(menu);
               if (!isSelf) {
-                menu = menu.filter((i) => i.permission !== 'PERMISSIONMANAGE')
+                menu = menu.filter((i) => !['PERMISSIONMANAGE', 'DEMO'].includes(i.permission));
+                console.log(menu);
               }
-              console.log(menu);
               res.send({
                 result: menu,
                 status: 0,
@@ -169,7 +169,8 @@ class PERMISSIONMENU {
               msg: '存在重复的用户，请前往查看后台数据'
             })
           } else {
-            const hasPermission = user[0].permission.split(',');
+            const isSelf = user[0].isSelf;
+            const hasPermission = isSelf ? user[0].permission.split(',') : user[0].permission.split(',').filter((i) => !['DEMO', 'DEMOADD', 'DEMOCHECK', 'DEMOEDIT', 'DEMODELETE'].includes(i));
             this.MenuListModel.find({}, { _id: 0 })
               .sort({ order: 1 })
               .then((list) => {

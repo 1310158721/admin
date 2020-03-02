@@ -4,7 +4,7 @@ const devRoutes = [
     name: 'Test',
     meta: {
       title: '方便测试',
-      keepAlive: true
+      keepAlive: false
     },
     component: () => import('@/views/Test/Test'),
     children: null

@@ -14,6 +14,7 @@ import '@/assets/css/index.css';
 import '@/assets/scss/index.scss';
 import '@/assets/js/directive';
 import '@/assets/js/filters';
+import '@/assets/js/prototype';
 import 'reset.css';
 import '@/http/interceptors';
 
