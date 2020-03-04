@@ -3,6 +3,7 @@ import store from '@/store';
 import { Message } from 'element-ui';
 import hljs from 'highlight.js';
 import 'highlight.js/styles/tomorrow-night-eighties.css'; // 样式文件
+import i18n from '@/i18n';
 
 // 根据一个权限值判断是否显示
 Vue.directive('permission', {
@@ -25,7 +26,7 @@ const ClipboardHandler = (el, binding) => {
   el.onclick = () => {
     const { value } = binding;
     if (!value && !el.getAttribute('data-clipboard')) {
-      Message.error('复制内容不能为空');
+      Message.error(i18n.t('复制内容不能为空'));
       return false;
     }
 
@@ -36,7 +37,7 @@ const ClipboardHandler = (el, binding) => {
     document.body.appendChild(inputDom);
     inputDom.select();
     document.execCommand('Copy');
-    Message.success('复制成功');
+    Message.success(i18n.t('复制成功'));
     inputDom.remove();
   };
 };

@@ -392,7 +392,9 @@ const en = {
       '404页面': '404 Page',
       返回: 'Back'
     }
-  }
+  },
+  '复制成功': 'Copy Success',
+  '复制内容不能为空': 'Copy content cannot be empty'
 };
 
 export default en;

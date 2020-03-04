@@ -393,7 +393,6 @@ export default {
     },
     rowClick (row, column, event) {
       const dom = event.target;
-      console.log(dom);
       if (!(dom.getAttribute('class').includes( 'el-icon--right') || dom.getAttribute('class').includes( 'el-dropdown-link')) && this.$hasPermission('MEMORANDUMCHECK')) {
         this.hanldeCheck(row.content);
       }

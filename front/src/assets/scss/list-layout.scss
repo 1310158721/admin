@@ -15,10 +15,11 @@
   }
   .table-wrapper {
     flex: 1;
+    overflow-y: auto;
     height: 100%;
   }
   .pagination-wrapper {
-    height: 32px;
+    height: 32px !important;
     .el-pagination {
       float: right;
     }
