@@ -4,3 +4,8 @@
 .is-set-first td {
   background: rgb(179, 179, 180)!important;
 }
+
+/* 允许查看 */
+.can-check td {
+  cursor: pointer!important;
+}

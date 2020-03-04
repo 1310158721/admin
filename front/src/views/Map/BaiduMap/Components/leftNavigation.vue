@@ -80,7 +80,9 @@ export default {
       } else {
         this.$nextTick(() => {
           const activeDom = parentDom.querySelectorAll('.active')[0];
-          activeDom && activeDom.scrollIntoView();
+          activeDom && activeDom.scrollIntoView({
+            behavior: 'smooth'
+          });
         });
       }
     }

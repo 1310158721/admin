@@ -57,12 +57,12 @@
           >
           </el-input>
           <el-button
-            :disabled="model.tag.length >= 3"
+            :disabled="model.tag.length >= 5"
             class="button-new-tag"
             size="small"
             @click="showInput"
             >{{
-              model.tag.length >= 3 ? this.$t('Memerandum.Dialog.最大标签数') : this.$t('Memerandum.Dialog.新增标签')
+              model.tag.length >= 5 ? this.$t('Memerandum.Dialog.最大标签数') : this.$t('Memerandum.Dialog.新增标签')
             }}</el-button
           >
         </el-form-item>

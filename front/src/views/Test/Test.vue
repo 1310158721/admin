@@ -1,5 +1,5 @@
 <template>
-  <div v-test @click='handleClick'>
+  <div>
     Test
   </div>
 </template>
@@ -7,13 +7,17 @@
 <script>
 export default {
   name: 'Test',
-  methods: {
-    handleClick () {
-      console.log('test');
-    }
-  }
+  components: {},
+  props: {},
+  data () {
+    return {};
+  },
+  computed: {},
+  methods: {},
+  created () {},
+  mounted () {},
+  watch: {}
 };
 </script>
 
 <style lang="scss" scoped></style>
-

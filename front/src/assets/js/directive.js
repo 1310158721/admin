@@ -64,11 +64,3 @@ Vue.directive('highlight', function (el) {
     hljs.highlightBlock(block);
   });
 });
-
-Vue.directive('test', {
-  inserted (el) {
-    el.onclick = function () {
-      console.log('directive');
-    };
-  }
-});

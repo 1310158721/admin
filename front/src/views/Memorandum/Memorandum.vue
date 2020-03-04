@@ -53,6 +53,7 @@
         stripe
         height="100%"
         :row-class-name="tableRowClassName"
+        @row-click='rowClick'
       >
         <el-table-column
           :label="$t('Memerandum.Order')"
@@ -100,7 +101,7 @@
           align="center"
           v-if="
             $hasPermission(
-              'MEMORANDUMCHECK,MEMORANDUMEDIT,MEMORANDUMDELETE,MEMORANDUMSETFIRST'
+              'MEMORANDUMEDIT,MEMORANDUMDELETE,MEMORANDUMSETFIRST,MEMORANDUMSHARE'
             )
           "
         >
@@ -110,7 +111,7 @@
                 {{ $t('menuList.更多') }}<i class="el-icon-arrow-down el-icon--right"></i>
               </span>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item @click.native='hanldeCheck(scope.row.content)' v-permission="'MEMORANDUMCHECK'">{{ $t('menuList.查看') }}</el-dropdown-item>
+                <!-- <el-dropdown-item @click.native='hanldeCheck(scope.row.content)' v-permission="'MEMORANDUMCHECK'">{{ $t('menuList.查看') }}</el-dropdown-item> -->
                 <el-dropdown-item @click.native='hanldeEdit(scope.row._id)' v-permission="'MEMORANDUMEDIT'">{{ $t('menuList.Edit') }}</el-dropdown-item>
                 <el-dropdown-item @click.native='hanldeDelete(scope.row._id)' v-permission="'MEMORANDUMDELETE'">{{ $t('menuList.Delete') }}</el-dropdown-item>
                 <el-dropdown-item @click.native='handleSwitchSetFirst(scope.row)' v-if="scope.row.isSetFirst" v-permission="'MEMORANDUMSETFIRST'">{{ $t('Memerandum.取消置顶') }}</el-dropdown-item>
@@ -333,7 +334,7 @@ export default {
     },
     // 为列表item添加class
     tableRowClassName ({ row }) {
-      return row.isSetFirst ? 'is-set-first' : '';
+      return [row.isSetFirst ? 'is-set-first' : '', this.$hasPermission('MEMORANDUMCHECK') ? 'can-check' : ''];
     },
     handleSwitchSetFirst ({ _id, isSetFirst }) {
       this.$confirm(
@@ -389,7 +390,13 @@ export default {
       // 复制链接
       const url = window.origin + '/#/MemorandumShare?uid=' + this.$store.state.userInfo._id + '&u=/getShareItemInfo' + '&_id=' + row._id;
       this.clipboardData = url;
-      console.log(this.clipboardData);
+    },
+    rowClick (row, column, event) {
+      const dom = event.target;
+      console.log(dom);
+      if (!(dom.getAttribute('class').includes( 'el-icon--right') || dom.getAttribute('class').includes( 'el-dropdown-link')) && this.$hasPermission('MEMORANDUMCHECK')) {
+        this.hanldeCheck(row.content);
+      }
     }
   },
   created () {
@@ -407,5 +414,13 @@ export default {
 .operation-dropdown {
   width: 96px;
   cursor: pointer;
+}
+.el-dropdown-link {
+  color: #909399;
+  font-weight: bold;
+  &:hover {
+    color: #409EFF;
+  }
+  user-select: none;
 }
 </style>
